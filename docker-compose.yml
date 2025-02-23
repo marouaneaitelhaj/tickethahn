@@ -1,23 +1,38 @@
 version: '3.8'
 
 services:
-  oracle-db:
-    image: oracleinanutshell/oracle-xe-11g
+  oracledb:
+    image: container-registry.oracle.com/database/enterprise:latest
+    container_name: oracledb
+    environment:
+      - ORACLE_PWD=roor123
+      - ORACLE_SID=ORCL
+      - ORACLE_PDB=ORCLPDB1
+    networks:
+      - app-network
     ports:
       - "1521:1521"
-    environment:
-      ORACLE_ALLOW_REMOTE: "true"
-      ORACLE_DISABLE_ASYNCH_IO: "true"
+      - "5500:5500"
     volumes:
-      - oracle-data:/u01/app/oracle
+      - oracle-data:/opt/oracle/oradata
+      - oracle-backup:/opt/oracle/backup
 
   java-app:
-    context: ./
-    dockerfile: Dockerfile
+    build:
+      context: ./
+      dockerfile: Dockerfile
     ports:
       - "8080:8080"
     depends_on:
-      - oracle-db
+      - oracledb
+    networks:
+      - app-network
+
+
+networks:
+  app-network:
+    driver: bridge
 
 volumes:
   oracle-data:
+  oracle-backup:
