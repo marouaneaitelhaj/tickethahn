@@ -33,28 +33,32 @@ public class TicketServiceImpl implements TicketService {
     private final ModelMapper modelMapper;
 
     @Override
-    public Ticket createTicket(@Valid TicketReq ticket) {
+    public Ticket createTicket(TicketReq ticket) {
         Ticket ticketEntity = modelMapper.map(ticket, Ticket.class);
-        Optional.ofNullable(ticket.getAssignedTo_id())
-                .ifPresent(userId -> ticketEntity.setAssignedTo(userRepository.findById(userId).orElse(null)));
+        Optional.ofNullable(ticket.getAssignedTo_id()).ifPresent(userId -> {
+            User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundEx("User not found"));
+            ticketEntity.setAssignedTo(user);
+        });
         ticketEntity.setStatus(Optional.ofNullable(ticket.getStatus()).orElse(Status.New));
         return ticketRepository.save(ticketEntity);
     }
 
     @Override
-    public Ticket updateTicket(@Valid TicketReq ticket, UUID id) {
+    public Ticket updateTicket(TicketReq ticket, UUID id) {
         Ticket ticketEntity = ticketRepository.findById(id).orElseThrow(() -> new NotFoundEx("Ticket not found"));
         checkIfStatusChanged(ticketEntity, ticket.getStatus());
         modelMapper.map(ticket, ticketEntity);
-        Optional.ofNullable(ticket.getAssignedTo_id())
-                .ifPresent(userId -> ticketEntity.setAssignedTo(userRepository.findById(userId).orElse(null)));
+        Optional.ofNullable(ticket.getAssignedTo_id()).ifPresent(userId -> {
+            User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundEx("User not found"));
+            ticketEntity.setAssignedTo(user);
+        });
         return ticketRepository.save(ticketEntity);
     }
 
     
     @Override
     public void checkIfStatusChanged(Ticket ticket, Status newStatus) {
-        if (ticket.getStatus() != newStatus) {
+        if (newStatus != null && ticket.getStatus() != newStatus) {
             AuditLogReq auditLog = new AuditLogReq();
             auditLog.setTicketId(ticket.getId());
             auditLog.setOldValue(ticket.getStatus().toString());
@@ -83,5 +87,18 @@ public class TicketServiceImpl implements TicketService {
     @Override
     public List<Ticket> findByStatus(Status status) {
         return ticketRepository.findByStatus(status);
+    }
+
+    @Override
+    public Ticket updateStatus(Status status, UUID id) {
+        Ticket ticket = ticketRepository.findById(id).orElseThrow(() -> new NotFoundEx("Ticket not found"));
+        ticket.setStatus(status);
+        return ticketRepository.save(ticket);
+    }
+
+    @Override
+    public void deleteTicket(UUID id) {
+        Ticket ticket = ticketRepository.findById(id).orElseThrow(() -> new NotFoundEx("Ticket not found"));
+        ticketRepository.delete(ticket);
     }
 }

@@ -1,4 +1,4 @@
-package com.wi.tickethahn.config;
+package com.wi.tickethahn.configs;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;

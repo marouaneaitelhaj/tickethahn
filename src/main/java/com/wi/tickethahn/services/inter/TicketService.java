@@ -10,9 +10,11 @@ import com.wi.tickethahn.enums.Status;
 public interface TicketService {
     Ticket createTicket(TicketReq ticket);
     Ticket updateTicket(TicketReq ticket, UUID id);
+    Ticket updateStatus(Status status, UUID id);
     void checkIfStatusChanged(Ticket ticket, Status new_status);
     List<Ticket> getTicketByUser(UUID id);
     List<Ticket> findAll();
     Ticket findById(UUID id);
     List<Ticket> findByStatus(Status status);
+    void deleteTicket(UUID id);
 }

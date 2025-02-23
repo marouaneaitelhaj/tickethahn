@@ -3,17 +3,24 @@ package com.wi.tickethahn.dtos.Ticket;
 import com.wi.tickethahn.enums.Category;
 import com.wi.tickethahn.enums.Priority;
 import com.wi.tickethahn.enums.Status;
+
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class TicketReq {
-    @NotBlank(message = "Title is mandatory")
+
+    
+    @NotNull(message = "Title is mandatory")
     @Size(max = 100, message = "Title must be less than 100 characters")
     private String title;
 
@@ -29,6 +36,5 @@ public class TicketReq {
 
     private Status status;
 
-    @NotBlank(message = "AssignedTo_id is mandatory")
     private UUID assignedTo_id;
 }
