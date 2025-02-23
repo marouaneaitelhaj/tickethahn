@@ -1,6 +1,9 @@
 package com.wi.tickethahn.services.impl;
 
+import java.util.Optional;
 import java.util.UUID;
+
+import javax.validation.Valid;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -28,45 +31,32 @@ public class TicketServiceImpl implements TicketService {
     private final ModelMapper modelMapper;
 
     @Override
-    public Ticket createTicket(TicketReq ticket) {
+    public Ticket createTicket(@Valid TicketReq ticket) {
         Ticket ticketEntity = modelMapper.map(ticket, Ticket.class);
-        UUID userId = ticket.getAssignedTo_id();
-        if (userId != null) {
-            ticketEntity.setAssignedTo(userRepository.findById(userId).orElse(null));
-        }
-        if (ticket.getStatus() == null) {
-            ticketEntity.setStatus(Status.New);
-        } else {
-            ticketEntity.setStatus(ticket.getStatus());
-        }
+        Optional.ofNullable(ticket.getAssignedTo_id())
+                .ifPresent(userId -> ticketEntity.setAssignedTo(userRepository.findById(userId).orElse(null)));
+        ticketEntity.setStatus(Optional.ofNullable(ticket.getStatus()).orElse(Status.New));
         return ticketRepository.save(ticketEntity);
     }
 
     @Override
-    public Ticket updateTicket(TicketReq ticket, UUID id) {
-        Ticket ticketEntity = ticketRepository.findById(id).orElse(null);
-        if (ticketEntity == null) {
-            throw new NotFoundEx("Ticket not found");
-        }
-        this.checkIfStatusChanged(ticketEntity, ticket.getStatus());
+    public Ticket updateTicket(@Valid TicketReq ticket, UUID id) {
+        Ticket ticketEntity = ticketRepository.findById(id).orElseThrow(() -> new NotFoundEx("Ticket not found"));
+        checkIfStatusChanged(ticketEntity, ticket.getStatus());
         modelMapper.map(ticket, ticketEntity);
-        UUID userId = ticket.getAssignedTo_id();
-        if (userId != null) {
-            ticketEntity.setAssignedTo(userRepository.findById(userId).orElse(null));
-        }
+        Optional.ofNullable(ticket.getAssignedTo_id())
+                .ifPresent(userId -> ticketEntity.setAssignedTo(userRepository.findById(userId).orElse(null)));
         return ticketRepository.save(ticketEntity);
     }
 
-    @Override
-    public Ticket checkIfStatusChanged(Ticket ticket, Status new_status) {
-        if (ticket.getStatus() != new_status) {
+    public void checkIfStatusChanged(Ticket ticket, Status newStatus) {
+        if (ticket.getStatus() != newStatus) {
             AuditLogReq auditLog = new AuditLogReq();
             auditLog.setTicketId(ticket.getId());
             auditLog.setOldValue(ticket.getStatus().toString());
-            auditLog.setNewValue(new_status.toString());
+            auditLog.setNewValue(newStatus.toString());
             auditLog.setAction(Action.Status_Changed);
-            this.auditLogService.createAuditLog(auditLog);
+            auditLogService.createAuditLog(auditLog);
         }
-        return null;
     }
 }

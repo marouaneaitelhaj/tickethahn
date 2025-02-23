@@ -10,6 +10,6 @@ public interface TicketService {
     Ticket createTicket(TicketReq ticket);
     // Ticket readTicket(Long id);
     Ticket updateTicket(TicketReq ticket, UUID id);
-    Ticket checkIfStatusChanged(Ticket ticket, Status new_status);
+    void checkIfStatusChanged(Ticket ticket, Status new_status);
     // boolean deleteTicket(Long id);
 }
