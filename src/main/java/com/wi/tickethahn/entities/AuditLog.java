@@ -3,6 +3,8 @@ package com.wi.tickethahn.entities;
 import java.util.Date;
 import java.util.UUID;
 
+import com.wi.tickethahn.enums.Action;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -20,7 +22,7 @@ public class AuditLog {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     private Long ticketId;
-    private String action;
+    private Action action;
     private String oldValue;
     private String newValue;
     private Date timestamp = new Date();

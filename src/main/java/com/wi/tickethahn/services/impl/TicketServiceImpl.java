@@ -44,11 +44,20 @@ public class TicketServiceImpl implements TicketService {
         if (ticketEntity == null) {
             throw new NotFoundEx("Ticket not found");
         }
+        this.checkIfStatusChanged(ticketEntity.getStatus(), ticket.getStatus());
         modelMapper.map(ticket, ticketEntity);
         UUID userId = ticket.getAssignedTo_id();
         if (userId != null) {
             ticketEntity.setAssignedTo(userRepository.findById(userId).orElse(null));
         }
         return ticketRepository.save(ticketEntity);
+    }
+
+    @Override
+    public Ticket checkIfStatusChanged(Status old_status, Status new_status) {
+        if (old_status != new_status) {
+            return null;
+        }
+        return null;
     }
 }
