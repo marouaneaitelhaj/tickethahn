@@ -77,5 +77,11 @@ public class TicketController {
         return ResponseEntity.ok(ticket);
     }
 
+    @GetMapping("/status/{status}")
+    public ResponseEntity<List<Ticket>> getTicketsByStatus(@PathVariable Status status) {
+        List<Ticket> tickets = ticketService.findByStatus(status);
+        return ResponseEntity.ok(tickets);
+    }
+
     
 }

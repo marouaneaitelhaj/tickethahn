@@ -30,9 +30,9 @@ public class AuditLog {
     @JoinColumn(name = "ticket_id")
     private Ticket ticket;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    // @ManyToOne
+    // @JoinColumn(name = "user_id")
+    // private User user;
 
     private Action action;
 

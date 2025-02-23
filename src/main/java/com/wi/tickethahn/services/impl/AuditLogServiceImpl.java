@@ -1,6 +1,8 @@
 package com.wi.tickethahn.services.impl;
 
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -28,16 +30,15 @@ public class AuditLogServiceImpl implements AuditLogService {
     private final ModelMapper modelMapper;
     private final AuditLogRepository auditLogRepository;
     private final TicketRepository ticketRepository;
+    private static final Logger logger = LoggerFactory.getLogger(TicketServiceImpl.class);
+
 
     @Override
     public AuditLog createAuditLog(@Valid AuditLogReq auditLog) {
-        try {
-            AuditLog auditLogEntity = modelMapper.map(auditLog, AuditLog.class);
-            return auditLogRepository.save(auditLogEntity);
-        } catch (Exception e) {
-            log.error("Error creating audit log: {}", e.getMessage(), e);
-            throw new RuntimeException("Failed to create audit log", e);
-        }
+        AuditLog auditLogEntity = modelMapper.map(auditLog, AuditLog.class);
+        auditLogEntity.setId(null);
+        logger.info("Creating audit log for ticket with id: {}, action: {}, ticket : {} ", auditLogEntity.getId(), auditLogEntity.getAction(), auditLogEntity.getTicket());
+        return auditLogRepository.save(auditLogEntity);
     }
 
     @Override

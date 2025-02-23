@@ -20,7 +20,8 @@ import com.wi.tickethahn.repositories.UserRepository;
 import com.wi.tickethahn.services.inter.AuditLogService;
 import java.util.List;
 import com.wi.tickethahn.services.inter.TicketService;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -52,6 +53,7 @@ public class TicketServiceImpl implements TicketService {
             User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundEx("User not found"));
             ticketEntity.setAssignedTo(user);
         });
+        ticketEntity.setStatus(Optional.ofNullable(ticket.getStatus()).orElse(Status.New));
         return ticketRepository.save(ticketEntity);
     }
 
