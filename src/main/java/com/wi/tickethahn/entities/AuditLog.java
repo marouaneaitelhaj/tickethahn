@@ -1,6 +1,8 @@
-package com.wi.tickethahn.entity;
+package com.wi.tickethahn.entities;
 
 import java.util.Date;
+import java.util.UUID;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -15,8 +17,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class AuditLog {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
     private Long ticketId;
     private String action;
     private String oldValue;

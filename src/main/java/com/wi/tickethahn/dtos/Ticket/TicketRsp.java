@@ -1,26 +1,23 @@
-package com.wi.tickethahn.entity;
-
+package com.wi.tickethahn.dtos.Ticket;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
+import com.wi.tickethahn.entities.User;
 import com.wi.tickethahn.enums.Category;
 import com.wi.tickethahn.enums.Priority;
 import com.wi.tickethahn.enums.Status;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class Ticket {
+public class TicketRsp {
+    private UUID id;
     private String title;
     private String description;
     private Priority priority;
     private Category category;
     private Status status;
     private User assignedTo;
-    private LocalDateTime creationDate = LocalDateTime.now();
+    private LocalDateTime creationDate;
 }
