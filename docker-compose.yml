@@ -5,9 +5,8 @@ services:
     image: container-registry.oracle.com/database/enterprise:latest
     container_name: oracledb
     environment:
-      - ORACLE_PWD=roor123
-      - ORACLE_SID=ORCL
-      - ORACLE_PDB=ORCLPDB1
+      - ORACLE_PWD=root123
+      - ORACLE_SID=MYTASK
     networks:
       - app-network
     ports:
@@ -25,6 +24,8 @@ services:
       - "8080:8080"
     depends_on:
       - oracledb
+    environment:
+      - DB_PASSWORD=root123
     networks:
       - app-network
 

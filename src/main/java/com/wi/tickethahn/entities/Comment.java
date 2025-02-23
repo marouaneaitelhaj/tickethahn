@@ -1,29 +1,21 @@
 package com.wi.tickethahn.entities;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.UUID;
-
-import com.wi.tickethahn.enums.Action;
-
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.sql.Timestamp;
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class AuditLog {
+public class Comment {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @ManyToOne
@@ -34,11 +26,6 @@ public class AuditLog {
     @JoinColumn(name = "user_id")
     private User user;
 
-    private Action action;
-
-    private String oldValue;
-
-    private String newValue;
-
+    private String message;
     private Timestamp createdAt;
 }

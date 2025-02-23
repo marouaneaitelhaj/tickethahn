@@ -1,6 +1,7 @@
 package com.wi.tickethahn.entities;
 
 
+import java.sql.Timestamp;
 import java.util.UUID;
 
 import com.wi.tickethahn.enums.Role;
@@ -24,5 +25,7 @@ public class User {
     private String username;
     private String password;
     private String email;
-    private Role[] role;
+    private Role role;
+    private Timestamp createdAt;
+    private Timestamp updatedAt;
 }
