@@ -19,7 +19,7 @@ public class TicketService {
     public List<Ticket> getAllTickets() {
         List<Ticket> tickets = new ArrayList<>();
         String response = apiClient.doGetRequest(TICKETS_ENDPOINT);
-        if (response.startsWith("Error:")) {
+        if (response.startsWith("{\"errors\"")) {
             return tickets;
         }
         try {
@@ -44,13 +44,14 @@ public class TicketService {
     public boolean updateTicketStatus(String ticketId, String newStatus) {
         String json = "{\"id\":\"" + ticketId + "\", \"status\":\"" + newStatus + "\"}";
         String response = apiClient.doPostRequest(UPDATE_STATUS_ENDPOINT, json);
-        return !response.startsWith("Error:");
+        return !response.startsWith("{\"errors\"");
     }
 
     // Updated method to include user_id as required by CommentReq
     public boolean addComment(String ticketId, String userId, String commentText) {
         String json = "{\"ticket_id\":\"" + ticketId + "\", \"user_id\":\"" + userId + "\", \"message\":\"" + commentText + "\"}";
         String response = apiClient.doPostRequest(COMMENTS_ENDPOINT, json);
-        return !response.startsWith("Error:");
+        System.out.println(response);
+        return !response.startsWith("{\"errors\"");
     }
 }

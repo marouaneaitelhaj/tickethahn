@@ -12,42 +12,18 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-
-
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler({NotFoundEx.class})
     public Map<String, String> handleNotFoundEx(RuntimeException e) {
-        return Map.of("error", e.getMessage());
+        return Map.of("error", "Error: " + e.getMessage());
     }
-
-    // @ExceptionHandler(DataIntegrityViolationException.class)
-    // @ResponseStatus(HttpStatus.BAD_REQUEST)
-    // public Map<String, String> handleDataIntegrityViolationException(DataIntegrityViolationException e) {
-    //     return Map.of("error", e.getMessage());
-    // }
-
-    // @ExceptionHandler(MethodArgumentNotValidException.class)
-    // public ResponseEntity<ValidationErrorResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
-        
-    //     List<String> errorDetails = ex.getBindingResult().getFieldErrors()
-    //         .stream()
-    //         .map(FieldError::getDefaultMessage)
-    //         .collect(Collectors.toList());
-
-    //     ValidationErrorResponse errorResponse = new ValidationErrorResponse(
-    //         "Validation Failed",
-    //         errorDetails
-    //     );
-
-    //     return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
-    // }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(DataIntegrityViolationException.class)
     public Map<String, String> handle(DataIntegrityViolationException e) {
-        return Map.of("error", e.getMessage());
+        return Map.of("error", "Error: " + e.getMessage());
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -56,6 +32,7 @@ public class GlobalExceptionHandler {
         ValidationErrorResponse errorResponse = new ValidationErrorResponse();
         errorResponse.setErrors(ex.getBindingResult().getAllErrors().stream()
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                .map(msg -> "Error: " + msg)
                 .collect(Collectors.toList()));
 
         return ResponseEntity.badRequest().body(errorResponse);
@@ -64,7 +41,6 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(org.springframework.http.converter.HttpMessageNotReadableException.class)
     public Map<String, String> handle(HttpMessageNotReadableException e) {
-        return Map.of("error", "Malformed JSON request");
+        return Map.of("error", "Error: Malformed JSON request");
     }
-
 }

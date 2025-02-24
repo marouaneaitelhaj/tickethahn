@@ -34,9 +34,9 @@ public class CommentServiceImpl implements CommentService {
     
     @Override
     public CommentRes createComment(CommentReq comment) {
-        Comment commentEntity = modelMapper.map(comment, Comment.class);
         User user = userRepository.findById(comment.getUser_id()).orElseThrow(() -> new NotFoundEx("User not found"));
         Ticket ticket = ticketRepository.findById(comment.getTicket_id()).orElseThrow(() -> new NotFoundEx("Ticket not found"));
+        Comment commentEntity = modelMapper.map(comment, Comment.class);
         commentEntity.setUser(user);
         commentEntity.setTicket(ticket);
         return modelMapper.map(commentRepository.save(commentEntity), CommentRes.class);
