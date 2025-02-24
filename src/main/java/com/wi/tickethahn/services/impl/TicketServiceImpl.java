@@ -35,18 +35,19 @@ public class TicketServiceImpl implements TicketService {
     private final ModelMapper modelMapper;
 
     @Override
-    public Ticket createTicket(TicketReq ticket) {
+    public TicketRsp createTicket(TicketReq ticket) {
         Ticket ticketEntity = modelMapper.map(ticket, Ticket.class);
         Optional.ofNullable(ticket.getAssignedTo_id()).ifPresent(userId -> {
             User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundEx("User not found"));
             ticketEntity.setAssignedTo(user);
         });
         ticketEntity.setStatus(Optional.ofNullable(ticket.getStatus()).orElse(Status.New));
-        return ticketRepository.save(ticketEntity);
+        Ticket savedTicket = ticketRepository.save(ticketEntity);
+        return modelMapper.map(savedTicket, TicketRsp.class);
     }
 
     @Override
-    public Ticket updateTicket(TicketReq ticket, UUID id) {
+    public TicketRsp updateTicket(TicketReq ticket, UUID id) {
         Ticket ticketEntity = ticketRepository.findById(id).orElseThrow(() -> new NotFoundEx("Ticket not found"));
         checkIfStatusChanged(ticketEntity, ticket.getStatus());
         modelMapper.map(ticket, ticketEntity);
@@ -55,7 +56,8 @@ public class TicketServiceImpl implements TicketService {
             ticketEntity.setAssignedTo(user);
         });
         ticketEntity.setStatus(Optional.ofNullable(ticket.getStatus()).orElse(Status.New));
-        return ticketRepository.save(ticketEntity);
+        Ticket savedTicket = ticketRepository.save(ticketEntity);
+        return modelMapper.map(savedTicket, TicketRsp.class);
     }
 
     
@@ -74,7 +76,8 @@ public class TicketServiceImpl implements TicketService {
     @Override
     public List<TicketRsp> getTicketByUser(UUID id) {
         User user = userRepository.findById(id).orElseThrow(() -> new NotFoundEx("User not found"));
-        return ticketRepository.findByAssignedTo_id(user.getId());
+        List<Ticket> list = ticketRepository.findByAssignedTo_id(user.getId());
+        return list.stream().map(ticket -> modelMapper.map(ticket, TicketRsp.class)).toList();
     }
 
     @Override
@@ -91,15 +94,17 @@ public class TicketServiceImpl implements TicketService {
 
     @Override
     public List<TicketRsp> findByStatus(Status status) {
-        return ticketRepository.findByStatus(status);
+        List<Ticket> list = ticketRepository.findByStatus(status);
+        return list.stream().map(ticket -> modelMapper.map(ticket, TicketRsp.class)).toList();
     }
 
     @Override
-    public Ticket updateStatus(Status status, UUID id) {
+    public TicketRsp updateStatus(Status status, UUID id) {
         Ticket ticket = ticketRepository.findById(id).orElseThrow(() -> new NotFoundEx("Ticket not found"));
         this.checkIfStatusChanged(ticket, status);
         ticket.setStatus(status);
-        return ticketRepository.save(ticket);
+        ticket = ticketRepository.save(ticket);
+        return modelMapper.map(ticket, TicketRsp.class);
     }
 
     @Override

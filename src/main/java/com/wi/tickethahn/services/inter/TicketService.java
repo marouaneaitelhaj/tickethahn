@@ -9,9 +9,9 @@ import java.util.List;
 import com.wi.tickethahn.enums.Status;
 
 public interface TicketService {
-    Ticket createTicket(TicketReq ticket);
-    Ticket updateTicket(TicketReq ticket, UUID id);
-    Ticket updateStatus(Status status, UUID id);
+    TicketRsp createTicket(TicketReq ticket);
+    TicketRsp updateTicket(TicketReq ticket, UUID id);
+    TicketRsp updateStatus(Status status, UUID id);
     void checkIfStatusChanged(Ticket ticket, Status new_status);
     List<TicketRsp> getTicketByUser(UUID id);
     List<TicketRsp> findAll();

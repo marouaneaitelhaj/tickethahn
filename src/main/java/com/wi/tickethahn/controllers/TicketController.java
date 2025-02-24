@@ -37,8 +37,8 @@ public class TicketController {
 
 
     @PostMapping
-    public ResponseEntity<Ticket> createTicket(@Valid @RequestBody TicketReq ticketreq) {
-        Ticket ticket = ticketService.createTicket(ticketreq);
+    public ResponseEntity<TicketRsp> createTicket(@Valid @RequestBody TicketReq ticketreq) {
+        TicketRsp ticket = ticketService.createTicket(ticketreq);
         return ResponseEntity.status(HttpStatus.CREATED).body(ticket);
     }
 
@@ -55,8 +55,8 @@ public class TicketController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Ticket> updateTicket(@Valid @RequestBody TicketReq ticketreq, @PathVariable UUID id) {
-        Ticket ticket = ticketService.updateTicket(ticketreq, id);
+    public ResponseEntity<TicketRsp> updateTicket(@Valid @RequestBody TicketReq ticketreq, @PathVariable UUID id) {
+        TicketRsp ticket = ticketService.updateTicket(ticketreq, id);
         return ResponseEntity.ok(ticket);
     }
 
@@ -75,8 +75,8 @@ public class TicketController {
 
 
     @PutMapping("/change-status")
-    public ResponseEntity<Ticket> changeStatus(@RequestBody TicketStatusUpdateRequest ticketStatusUpdateRequest) {
-        Ticket ticket = ticketService.updateStatus(ticketStatusUpdateRequest.getStatus(), ticketStatusUpdateRequest.getId());
+    public ResponseEntity<TicketRsp> changeStatus(@RequestBody TicketStatusUpdateRequest ticketStatusUpdateRequest) {
+        TicketRsp ticket = ticketService.updateStatus(ticketStatusUpdateRequest.getStatus(), ticketStatusUpdateRequest.getId());
         return ResponseEntity.ok(ticket);
     }
 
