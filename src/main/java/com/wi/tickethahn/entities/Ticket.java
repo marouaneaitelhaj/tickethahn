@@ -2,6 +2,7 @@ package com.wi.tickethahn.entities;
 
 
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.UUID;
 
 import com.wi.tickethahn.enums.Category;
@@ -14,8 +15,10 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Data;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
@@ -45,6 +48,9 @@ public class Ticket {
     @ManyToOne
     @JoinColumn(name = "created_by")
     private User createdBy;
+
+    @OneToMany(mappedBy = "ticket", cascade = CascadeType.REMOVE)
+    List<AuditLog> auditLogs;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)

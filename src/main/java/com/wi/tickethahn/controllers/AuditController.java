@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.wi.tickethahn.dtos.AuditLog.AuditLogRes;
 import com.wi.tickethahn.entities.AuditLog;
 import com.wi.tickethahn.services.inter.AuditLogService;
 
@@ -24,14 +25,14 @@ public class AuditController {
 
 
     @GetMapping("/{ticketId}")
-    public ResponseEntity<List<AuditLog>> getAuditLogs(@PathVariable UUID ticketId) {
-        List<AuditLog> auditLogs = auditLogService.getAuditLogs(ticketId);
+    public ResponseEntity<List<AuditLogRes>> getAuditLogs(@PathVariable UUID ticketId) {
+        List<AuditLogRes> auditLogs = auditLogService.getAuditLogs(ticketId);
         return ResponseEntity.ok(auditLogs);
     }
 
     @GetMapping
-    public ResponseEntity<List<AuditLog>> getAllAuditLogs() {
-        List<AuditLog> auditLogs = auditLogService.findAll();
+    public ResponseEntity<List<AuditLogRes>> getAllAuditLogs() {
+        List<AuditLogRes> auditLogs = auditLogService.findAll();
         return ResponseEntity.ok(auditLogs);
     }
 }

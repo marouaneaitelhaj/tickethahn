@@ -8,9 +8,10 @@ import java.util.UUID;
 import org.modelmapper.ModelMapper;
 
 import com.wi.tickethahn.dtos.AuditLog.AuditLogReq;
+import com.wi.tickethahn.dtos.AuditLog.AuditLogRes;
 
 public interface AuditLogService {
     AuditLog createAuditLog(AuditLogReq auditLog);
-    List<AuditLog> getAuditLogs(UUID ticketId);
-    List<AuditLog> findAll();
+    List<AuditLogRes> getAuditLogs(UUID ticketId);
+    List<AuditLogRes> findAll();
 }

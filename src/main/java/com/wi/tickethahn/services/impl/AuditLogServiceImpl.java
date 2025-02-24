@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import com.wi.tickethahn.dtos.AuditLog.AuditLogReq;
+import com.wi.tickethahn.dtos.AuditLog.AuditLogRes;
 import com.wi.tickethahn.entities.AuditLog;
 import com.wi.tickethahn.entities.Ticket;
 import com.wi.tickethahn.repositories.AuditLogRepository;
@@ -42,13 +43,15 @@ public class AuditLogServiceImpl implements AuditLogService {
     }
 
     @Override
-    public List<AuditLog> getAuditLogs(UUID ticketId) {
+    public List<AuditLogRes> getAuditLogs(UUID ticketId) {
         Ticket ticket = ticketRepository.findById(ticketId).orElseThrow(() -> new RuntimeException("Ticket not found"));
-        return auditLogRepository.findByTicket(ticket);
+        List<AuditLog> auditLogs = auditLogRepository.findByTicket(ticket);
+        return auditLogs.stream().map(auditLog -> modelMapper.map(auditLog, AuditLogRes.class)).toList();
     }
 
     @Override
-    public List<AuditLog> findAll() {
-        return auditLogRepository.findAll();
+    public List<AuditLogRes> findAll() {
+        List<AuditLog>  auditLogs = auditLogRepository.findAll();
+        return auditLogs.stream().map(auditLog -> modelMapper.map(auditLog, AuditLogRes.class)).toList();
     }
 }

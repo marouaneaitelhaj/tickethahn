@@ -19,6 +19,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import lombok.Data;
 import jakarta.persistence.Column;
 import lombok.NoArgsConstructor;
+import jakarta.persistence.CascadeType;
 
 @Entity
 @Data
@@ -29,7 +30,7 @@ public class AuditLog {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "ticket_id")
     private Ticket ticket;
 

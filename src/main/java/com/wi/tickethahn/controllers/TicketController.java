@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 import com.wi.tickethahn.dtos.Ticket.TicketReq;
+import com.wi.tickethahn.dtos.Ticket.TicketRsp;
+import com.wi.tickethahn.dtos.Ticket.TicketStatusUpdateRequest;
+
 import java.util.List;
 import java.util.UUID;
 import com.wi.tickethahn.entities.Ticket;
@@ -40,14 +43,14 @@ public class TicketController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Ticket>> getAllTickets() {
-        List<Ticket> tickets = ticketService.findAll();
+    public ResponseEntity<List<TicketRsp>> getAllTickets() {
+        List<TicketRsp> tickets = ticketService.findAll();
         return ResponseEntity.ok(tickets);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Ticket> getTicketById(@PathVariable UUID id) {
-        Ticket ticket = ticketService.findById(id);
+    public ResponseEntity<TicketRsp> getTicketById(@PathVariable UUID id) {
+        TicketRsp ticket = ticketService.findById(id);
         return ResponseEntity.ok(ticket);
     }
 
@@ -65,21 +68,21 @@ public class TicketController {
 
 
     @GetMapping("/my-tickets")
-    public ResponseEntity<List<Ticket>> getMyTickets() {
-        List<Ticket> tickets = ticketService.findAll();
+    public ResponseEntity<List<TicketRsp>> getMyTickets() {
+        List<TicketRsp> tickets = ticketService.findAll();
         return ResponseEntity.ok(tickets);
     }
 
 
-    @PostMapping("/change-status")
-    public ResponseEntity<Ticket> changeStatus(@RequestBody Status status, @RequestBody UUID id) {
-        Ticket ticket = ticketService.updateStatus(status, id);
+    @PutMapping("/change-status")
+    public ResponseEntity<Ticket> changeStatus(@RequestBody TicketStatusUpdateRequest ticketStatusUpdateRequest) {
+        Ticket ticket = ticketService.updateStatus(ticketStatusUpdateRequest.getStatus(), ticketStatusUpdateRequest.getId());
         return ResponseEntity.ok(ticket);
     }
 
     @GetMapping("/status/{status}")
-    public ResponseEntity<List<Ticket>> getTicketsByStatus(@PathVariable Status status) {
-        List<Ticket> tickets = ticketService.findByStatus(status);
+    public ResponseEntity<List<TicketRsp>> getTicketsByStatus(@PathVariable Status status) {
+        List<TicketRsp> tickets = ticketService.findByStatus(status);
         return ResponseEntity.ok(tickets);
     }
 

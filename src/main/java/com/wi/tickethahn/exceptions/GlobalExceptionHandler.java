@@ -4,6 +4,7 @@ import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -61,6 +62,12 @@ public class GlobalExceptionHandler {
                 .collect(Collectors.toList()));
 
         return ResponseEntity.badRequest().body(errorResponse);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(org.springframework.http.converter.HttpMessageNotReadableException.class)
+    public Map<String, String> handle(HttpMessageNotReadableException e) {
+        return Map.of("error", "Malformed JSON request");
     }
 
 }

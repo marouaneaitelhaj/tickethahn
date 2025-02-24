@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.wi.tickethahn.dtos.AuditLog.AuditLogReq;
 import com.wi.tickethahn.dtos.Ticket.TicketReq;
+import com.wi.tickethahn.dtos.Ticket.TicketRsp;
 import com.wi.tickethahn.entities.Ticket;
 import com.wi.tickethahn.entities.User;
 import com.wi.tickethahn.enums.Action;
@@ -71,29 +72,32 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public List<Ticket> getTicketByUser(UUID id) {
+    public List<TicketRsp> getTicketByUser(UUID id) {
         User user = userRepository.findById(id).orElseThrow(() -> new NotFoundEx("User not found"));
         return ticketRepository.findByAssignedTo_id(user.getId());
     }
 
     @Override
-    public List<Ticket> findAll() {
-        return ticketRepository.findAll();
+    public List<TicketRsp> findAll() {
+        List<Ticket> tickets = ticketRepository.findAll();
+        return tickets.stream().map(ticket -> modelMapper.map(ticket, TicketRsp.class)).toList();
     }
 
     @Override
-    public Ticket findById(UUID id) {
-        return ticketRepository.findById(id).orElseThrow(() -> new NotFoundEx("Ticket not found"));
+    public TicketRsp findById(UUID id) {
+        Ticket ticket = ticketRepository.findById(id).orElseThrow(() -> new NotFoundEx("Ticket not found"));
+        return modelMapper.map(ticket, TicketRsp.class);
     }
 
     @Override
-    public List<Ticket> findByStatus(Status status) {
+    public List<TicketRsp> findByStatus(Status status) {
         return ticketRepository.findByStatus(status);
     }
 
     @Override
     public Ticket updateStatus(Status status, UUID id) {
         Ticket ticket = ticketRepository.findById(id).orElseThrow(() -> new NotFoundEx("Ticket not found"));
+        this.checkIfStatusChanged(ticket, status);
         ticket.setStatus(status);
         return ticketRepository.save(ticket);
     }
