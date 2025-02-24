@@ -5,7 +5,7 @@ services:
     image: container-registry.oracle.com/database/enterprise:latest
     container_name: oracledb
     environment:
-      - ORACLE_PWD=root123
+      - ORACLE_PWD=root123@@__
       - ORACLE_SID=MYTASK
     ports:
       - "1521:1521"
@@ -23,7 +23,7 @@ services:
     depends_on:
       - oracledb
     environment:
-      - DB_PASSWORD=root123
+      - DB_PASSWORD=root123@@__
     ports:
       - "8080:8080"
     networks:

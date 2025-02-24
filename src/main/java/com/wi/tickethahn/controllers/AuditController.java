@@ -28,4 +28,10 @@ public class AuditController {
         List<AuditLog> auditLogs = auditLogService.getAuditLogs(ticketId);
         return ResponseEntity.ok(auditLogs);
     }
+
+    @GetMapping
+    public ResponseEntity<List<AuditLog>> getAllAuditLogs() {
+        List<AuditLog> auditLogs = auditLogService.findAll();
+        return ResponseEntity.ok(auditLogs);
+    }
 }

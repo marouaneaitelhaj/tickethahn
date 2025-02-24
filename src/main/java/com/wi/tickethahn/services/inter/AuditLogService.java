@@ -12,4 +12,5 @@ import com.wi.tickethahn.dtos.AuditLog.AuditLogReq;
 public interface AuditLogService {
     AuditLog createAuditLog(AuditLogReq auditLog);
     List<AuditLog> getAuditLogs(UUID ticketId);
+    List<AuditLog> findAll();
 }

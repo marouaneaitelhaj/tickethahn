@@ -17,7 +17,10 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
+import jakarta.persistence.Column;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import lombok.AllArgsConstructor;
 
 
@@ -44,6 +47,10 @@ public class Ticket {
     @JoinColumn(name = "created_by")
     private User createdBy;
 
+    @CreationTimestamp
+    @Column(name = "created_at", nullable = false, updatable = false)
     private Timestamp createdAt;
+    @UpdateTimestamp
+    @Column(name = "updated_at", nullable = false)
     private Timestamp updatedAt;
 }

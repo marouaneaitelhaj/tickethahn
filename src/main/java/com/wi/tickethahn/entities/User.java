@@ -4,8 +4,12 @@ package com.wi.tickethahn.entities;
 import java.sql.Timestamp;
 import java.util.UUID;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import com.wi.tickethahn.enums.Role;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -28,6 +32,10 @@ public class User {
     private String password;
     private String email;
     private Role role;
+    @CreationTimestamp
+    @Column(name = "created_at", nullable = false, updatable = false)
     private Timestamp createdAt;
+    @UpdateTimestamp
+    @Column(name = "updated_at", nullable = false)
     private Timestamp updatedAt;
 }

@@ -46,4 +46,9 @@ public class AuditLogServiceImpl implements AuditLogService {
         Ticket ticket = ticketRepository.findById(ticketId).orElseThrow(() -> new RuntimeException("Ticket not found"));
         return auditLogRepository.findByTicket(ticket);
     }
+
+    @Override
+    public List<AuditLog> findAll() {
+        return auditLogRepository.findAll();
+    }
 }
