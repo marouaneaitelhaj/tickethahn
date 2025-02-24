@@ -1,5 +1,7 @@
 package com.wi.tickethahn.services.impl;
 
+import java.util.List;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -38,6 +40,12 @@ public class CommentServiceImpl implements CommentService {
         commentEntity.setUser(user);
         commentEntity.setTicket(ticket);
         return modelMapper.map(commentRepository.save(commentEntity), CommentRes.class);
+    }
+
+    @Override
+    public List<CommentRes> findAll() {
+        List<Comment> comments = commentRepository.findAll();
+        return comments.stream().map(comment -> modelMapper.map(comment, CommentRes.class)).toList();
     }
     
 }

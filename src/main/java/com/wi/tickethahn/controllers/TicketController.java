@@ -1,5 +1,7 @@
 package com.wi.tickethahn.controllers;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,6 +20,7 @@ import com.wi.tickethahn.dtos.Ticket.TicketStatusUpdateRequest;
 
 import java.util.List;
 import java.util.UUID;
+
 import com.wi.tickethahn.enums.Status;
 import com.wi.tickethahn.services.inter.TicketService;
 import jakarta.validation.Valid;
@@ -34,14 +37,18 @@ public class TicketController {
     private final TicketService ticketService;
 
 
+    private static final Logger logger = LoggerFactory.getLogger(TicketController.class);
+
     @PostMapping
     public ResponseEntity<TicketRsp> createTicket(@Valid @RequestBody TicketReq ticketreq) {
+        logger.info("Creating a new ticket");
         TicketRsp ticket = ticketService.createTicket(ticketreq);
         return ResponseEntity.status(HttpStatus.CREATED).body(ticket);
     }
 
     @GetMapping
     public ResponseEntity<List<TicketRsp>> getAllTickets() {
+        logger.info("Fetching all tickets");
         List<TicketRsp> tickets = ticketService.findAll();
         return ResponseEntity.ok(tickets);
     }
