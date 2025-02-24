@@ -47,6 +47,5 @@ public class AuditLog {
     @Column(name = "created_at", nullable = false, updatable = false)
     private Timestamp createdAt;
     @UpdateTimestamp
-    @Column(name = "updated_at", nullable = false)
     private Timestamp updatedAt;
 }
