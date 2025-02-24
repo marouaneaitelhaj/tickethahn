@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.wi.tickethahn.dtos.AuditLog.AuditLogRes;
-import com.wi.tickethahn.entities.AuditLog;
 import com.wi.tickethahn.services.inter.AuditLogService;
 
 import lombok.RequiredArgsConstructor;

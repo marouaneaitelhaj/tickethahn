@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.wi.tickethahn.dtos.Ticket.TicketRsp;
 import com.wi.tickethahn.entities.Ticket;
 import com.wi.tickethahn.enums.Status;
 

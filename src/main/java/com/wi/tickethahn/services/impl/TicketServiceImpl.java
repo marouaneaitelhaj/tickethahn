@@ -3,7 +3,6 @@ package com.wi.tickethahn.services.impl;
 import java.util.Optional;
 import java.util.UUID;
 
-import javax.validation.Valid;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -21,8 +20,6 @@ import com.wi.tickethahn.repositories.UserRepository;
 import com.wi.tickethahn.services.inter.AuditLogService;
 import java.util.List;
 import com.wi.tickethahn.services.inter.TicketService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import lombok.RequiredArgsConstructor;
 
 @Service

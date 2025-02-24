@@ -1,8 +1,6 @@
 package com.wi.tickethahn.entities;
 
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.UUID;
 
 import com.wi.tickethahn.enums.Action;

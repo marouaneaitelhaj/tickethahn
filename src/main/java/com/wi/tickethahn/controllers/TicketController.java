@@ -2,7 +2,6 @@ package com.wi.tickethahn.controllers;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,7 +18,6 @@ import com.wi.tickethahn.dtos.Ticket.TicketStatusUpdateRequest;
 
 import java.util.List;
 import java.util.UUID;
-import com.wi.tickethahn.entities.Ticket;
 import com.wi.tickethahn.enums.Status;
 import com.wi.tickethahn.services.inter.TicketService;
 import jakarta.validation.Valid;

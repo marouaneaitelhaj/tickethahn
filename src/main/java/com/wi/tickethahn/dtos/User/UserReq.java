@@ -1,6 +1,5 @@
 package com.wi.tickethahn.dtos.User;
 
-import java.sql.Timestamp;
 
 import com.wi.tickethahn.enums.Role;
 

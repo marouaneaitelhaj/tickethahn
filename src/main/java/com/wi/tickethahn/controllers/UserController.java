@@ -9,9 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.wi.tickethahn.dtos.Ticket.TicketReq;
 import com.wi.tickethahn.dtos.User.UserReq;
-import com.wi.tickethahn.entities.Ticket;
 import com.wi.tickethahn.entities.User;
 import com.wi.tickethahn.services.inter.UserService;
 
