@@ -79,7 +79,7 @@ public class TicketController {
     }
 
 
-    @PutMapping("/change-status")
+    @PostMapping("/change-status")
     public ResponseEntity<TicketRsp> changeStatus(@RequestBody TicketStatusUpdateRequest ticketStatusUpdateRequest) {
         TicketRsp ticket = ticketService.updateStatus(ticketStatusUpdateRequest.getStatus(), ticketStatusUpdateRequest.getId());
         return ResponseEntity.ok(ticket);

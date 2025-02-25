@@ -26,7 +26,7 @@ public class Ticket {
     private String status;
 
     private User assignedTo;
-    private String assignedToId;
+    private String username;
 
     private User createdBy;
 

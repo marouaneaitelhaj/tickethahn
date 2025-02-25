@@ -39,14 +39,14 @@ public class TicketTableModel extends AbstractTableModel {
             case 2: return ticket.getPriority();
             case 3: return ticket.getCategory();
             case 4: return ticket.getStatus();
-            case 5: return ticket.getAssignedToId();
+            case 5: return ticket.getAssignedTo().getUsername();
             default: return null;
         }
     }
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        // Allow editing only for the "Status" column (index 4)
+        // Allow inline editing only for the Status column (index 4)
         return columnIndex == 4;
     }
 

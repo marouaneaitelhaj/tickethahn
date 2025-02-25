@@ -7,6 +7,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ReadTicketsWindow extends JFrame {
 
@@ -15,46 +16,69 @@ public class ReadTicketsWindow extends JFrame {
     private JTable ticketsTable;
     private JTextArea messageArea;
 
+    // Search and filter components
+    private JTextField searchField;
+    private JComboBox<String> filterCombo;
+
+    private List<Ticket> allTickets; // full list of tickets
+
     public ReadTicketsWindow() {
         super("View All Tickets");
         setSize(900, 600);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         initComponents();
+        loadTickets();
     }
 
     private void initComponents() {
-        // Top panel with buttons
+        // Search panel
+        JPanel searchPanel = new JPanel();
+        searchPanel.add(new JLabel("Search by ID:"));
+        searchField = new JTextField(10);
+        searchPanel.add(searchField);
+        JButton searchButton = new JButton("Search");
+        searchButton.addActionListener(this::handleSearch);
+        searchPanel.add(searchButton);
+        searchPanel.add(new JLabel("Filter by Status:"));
+        filterCombo = new JComboBox<>(new String[]{"All", "New", "In_Progress", "Resolved"});
+        filterCombo.addActionListener(e -> handleFilter());
+        searchPanel.add(filterCombo);
         JButton loadButton = new JButton("Load Tickets");
-        loadButton.addActionListener(this::handleLoadTickets);
+        loadButton.addActionListener(e -> loadTickets());
+        searchPanel.add(loadButton);
 
+        // Buttons panel
         JButton addTicketButton = new JButton("Add Ticket");
         addTicketButton.addActionListener(e -> {
             AddTicketWindow addWindow = new AddTicketWindow();
             addWindow.setVisible(true);
         });
-
+        JButton editTicketButton = new JButton("Edit Ticket");
+        editTicketButton.addActionListener(this::handleEditTicket);
         JButton updateStatusButton = new JButton("Update Status");
         updateStatusButton.addActionListener(this::handleUpdateStatus);
-
         JButton addCommentButton = new JButton("Add Comment");
         addCommentButton.addActionListener(this::handleAddComment);
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.add(addTicketButton);
+        buttonPanel.add(editTicketButton);
+        buttonPanel.add(updateStatusButton);
+        buttonPanel.add(addCommentButton);
 
-        JPanel topPanel = new JPanel();
-        topPanel.add(loadButton);
-        topPanel.add(addTicketButton);
-        topPanel.add(updateStatusButton);
-        topPanel.add(addCommentButton);
+        JPanel topPanel = new JPanel(new BorderLayout());
+        topPanel.add(searchPanel, BorderLayout.NORTH);
+        topPanel.add(buttonPanel, BorderLayout.SOUTH);
 
-        // Table for tickets
+        // Tickets table
         tableModel = new TicketTableModel(ticketService.getAllTickets());
         ticketsTable = new JTable(tableModel);
-        String[] statusOptions = { "New", "In_Progress", "Resolved" };
+        String[] statusOptions = {"New", "In_Progress", "Resolved"};
         JComboBox<String> statusComboBox = new JComboBox<>(statusOptions);
         ticketsTable.getColumnModel().getColumn(4).setCellEditor(new DefaultCellEditor(statusComboBox));
         JScrollPane tableScrollPane = new JScrollPane(ticketsTable);
 
-        // Message area for status/info messages
+        // Message area
         messageArea = new JTextArea(5, 70);
         messageArea.setEditable(false);
         JScrollPane messageScrollPane = new JScrollPane(messageArea);
@@ -67,10 +91,38 @@ public class ReadTicketsWindow extends JFrame {
         add(mainPanel);
     }
 
-    private void handleLoadTickets(ActionEvent event) {
-        List<Ticket> tickets = ticketService.getAllTickets();
-        tableModel.setTickets(tickets);
-        messageArea.setText("Loaded " + tickets.size() + " tickets.");
+    private void loadTickets() {
+        allTickets = ticketService.getAllTickets();
+        tableModel.setTickets(allTickets);
+        messageArea.setText("Loaded " + allTickets.size() + " tickets.");
+    }
+
+    private void handleSearch(ActionEvent event) {
+        String searchId = searchField.getText().trim();
+        if (searchId.isEmpty()) {
+            tableModel.setTickets(allTickets);
+            messageArea.setText("Search field empty. Showing all tickets.");
+            return;
+        }
+        List<Ticket> filtered = allTickets.stream()
+                .filter(t -> t.getId().equalsIgnoreCase(searchId))
+                .collect(Collectors.toList());
+        tableModel.setTickets(filtered);
+        messageArea.setText("Found " + filtered.size() + " ticket(s) with ID: " + searchId);
+    }
+
+    private void handleFilter() {
+        String selectedStatus = (String) filterCombo.getSelectedItem();
+        if ("All".equals(selectedStatus)) {
+            tableModel.setTickets(allTickets);
+            messageArea.setText("Showing all tickets.");
+        } else {
+            List<Ticket> filtered = allTickets.stream()
+                    .filter(t -> t.getStatus().equalsIgnoreCase(selectedStatus))
+                    .collect(Collectors.toList());
+            tableModel.setTickets(filtered);
+            messageArea.setText("Filtered by status: " + selectedStatus + " (" + filtered.size() + " found)");
+        }
     }
 
     private void handleUpdateStatus(ActionEvent event) {
@@ -89,7 +141,6 @@ public class ReadTicketsWindow extends JFrame {
         }
     }
 
-    // Updated to prompt for user id as well
     private void handleAddComment(ActionEvent event) {
         int selectedRow = ticketsTable.getSelectedRow();
         if (selectedRow < 0) {
@@ -110,6 +161,26 @@ public class ReadTicketsWindow extends JFrame {
                 messageArea.setText("Comment added for ticket " + ticket.getId());
             } else {
                 messageArea.setText("Failed to add comment for ticket " + ticket.getId());
+            }
+        }
+    }
+
+    private void handleEditTicket(ActionEvent event) {
+        int selectedRow = ticketsTable.getSelectedRow();
+        if (selectedRow < 0) {
+            messageArea.setText("Please select a ticket to edit.");
+            return;
+        }
+        Ticket ticket = tableModel.getTicketAt(selectedRow);
+        EditTicketDialog editDialog = new EditTicketDialog(this, ticket);
+        editDialog.setVisible(true);
+        if (editDialog.isSaved()) {
+            boolean success = ticketService.updateTicket(editDialog.getTicket());
+            if (success) {
+                messageArea.setText("Ticket updated successfully.");
+                loadTickets();
+            } else {
+                messageArea.setText("Failed to update ticket.");
             }
         }
     }
