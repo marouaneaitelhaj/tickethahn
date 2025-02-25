@@ -13,6 +13,11 @@ TicketHahn is a ticket management system built with Spring Boot and Java Swing. 
 - [Contributing](#contributing)
 - [License](#license)
 - [Code Coverage](#code-coverage)
+## Demonstration Video
+
+Watch the demonstration video to see TicketHahn in action:
+
+[![Watch the video](https://www.canva.com/design/DAGgEUgca0c/aMQq4AuAnRtQpyheg4MktQ/edit?utm_content=DAGgEUgca0c&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)]
 
 ## Features
 
