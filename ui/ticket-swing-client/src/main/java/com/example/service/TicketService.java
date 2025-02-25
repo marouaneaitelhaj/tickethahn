@@ -12,7 +12,7 @@ import java.util.List;
 public class TicketService {
 
     private static final String TICKETS_ENDPOINT        = "http://localhost:8080/api/v1/tickets";
-    private static final String UPDATE_STATUS_ENDPOINT  = "http://localhost:8080/api/v1/tickets/updateStatus";
+    private static final String UPDATE_STATUS_ENDPOINT  = "http://localhost:8080/api/v1/tickets/change-status";
     private static final String UPDATE_TICKET_ENDPOINT  = "http://localhost:8080/api/v1/tickets/";
     private static final String COMMENTS_ENDPOINT       = "http://localhost:8080/api/v1/comments";
 
@@ -57,6 +57,7 @@ public class TicketService {
     public boolean updateTicketStatus(String ticketId, String newStatus) {
         String json = "{\"id\":\"" + ticketId + "\", \"status\":\"" + newStatus + "\"}";
         String response = apiClient.doPostRequest(UPDATE_STATUS_ENDPOINT, json);
+        System.out.println(response);
         return !response.startsWith("Error:");
     }
 

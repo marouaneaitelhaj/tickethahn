@@ -10,4 +10,6 @@ import com.wi.tickethahn.entities.AuditLog;
 
 public interface AuditLogRepository extends JpaRepository<AuditLog, UUID> {
     List<AuditLog> findByTicket(Ticket ticket);
+
+    List<AuditLog> findByTicketId(UUID ticketId);
 }

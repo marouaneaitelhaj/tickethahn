@@ -1,5 +1,7 @@
 package com.example;
 
+import com.example.ui.ReadTicketsWindow;
+
 /**
  * Hello world!
  *
@@ -8,6 +10,6 @@ public class App
 {
     public static void main( String[] args )
     {
-        System.out.println( "Hello World!" );
+        ReadTicketsWindow window = new ReadTicketsWindow();
     }
 }
