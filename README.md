@@ -4,6 +4,7 @@ TicketHahn is a ticket management system built with Spring Boot and Java Swing. 
 
 ## Table of Contents
 
+- [Code Coverage](#code-coverage)
 - [Features](#features)
 - [Technologies Used](#technologies-used)
 - [Getting Started](#getting-started)
@@ -12,7 +13,17 @@ TicketHahn is a ticket management system built with Spring Boot and Java Swing. 
 - [API Endpoints](#api-endpoints)
 - [Contributing](#contributing)
 - [License](#license)
-- [Code Coverage](#code-coverage)
+
+## Code Coverage
+![alt text](image.png)
+To generate code coverage reports using JaCoCo, run the following command:
+
+```sh
+mvn clean test
+```
+
+The code coverage report will be generated in the `target/site/jacoco` directory. Open the `index.html` file in a web browser to view the report.
+
 ## Demonstration Video
 
 Watch the demonstration video to see TicketHahn in action:
@@ -116,13 +127,3 @@ The application will be available at [http://localhost:8080](http://localhost:80
 
 - `GET /api/v1/audit/{ticketId}` - Get audit logs for a ticket
 - `GET /api/v1/audit` - Get all audit logs
-
-## Code Coverage
-![alt text](image.png)
-To generate code coverage reports using JaCoCo, run the following command:
-
-```sh
-mvn clean test
-```
-
-The code coverage report will be generated in the `target/site/jacoco` directory. Open the `index.html` file in a web browser to view the report.
