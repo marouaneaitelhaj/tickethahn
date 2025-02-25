@@ -80,23 +80,7 @@ mvn clean install
 Start the services using Docker Compose:
 
 ```sh
-docker-compose up
-```
-
-The application will be available at [http://localhost:8080](http://localhost:8080).
-
-### Running Locally
-
-Start the Oracle database using Docker:
-
-```sh
-docker run -d -p 1521:1521 --name oracle-db oracle/database:latest
-```
-
-Run the Spring Boot application:
-
-```sh
-mvn spring-boot:run
+docker-compose up -d --build
 ```
 
 The application will be available at [http://localhost:8080](http://localhost:8080).
