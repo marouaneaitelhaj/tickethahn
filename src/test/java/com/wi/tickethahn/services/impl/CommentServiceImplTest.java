@@ -23,6 +23,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -140,5 +141,43 @@ class CommentServiceImplTest {
         // When / Then
         assertThrows(NotFoundEx.class, () -> commentService.createComment(commentReq));
         verify(commentRepository, never()).save(any(Comment.class));
+    }
+
+    // ------------------------------------------------------------
+    // findAll (Success)
+    // ------------------------------------------------------------
+    @Test
+    void findAll_Success() {
+        // Given
+        List<Comment> comments = List.of(savedCommentEntity);
+        List<CommentRes> commentResList = List.of(commentRes);
+        when(commentRepository.findAll()).thenReturn(comments);
+        when(modelMapper.map(savedCommentEntity, CommentRes.class)).thenReturn(commentRes);
+
+        // When
+        List<CommentRes> result = commentService.findAll();
+
+        // Then
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals(commentResList, result);
+        verify(commentRepository).findAll();
+    }
+
+    // ------------------------------------------------------------
+    // findAll (Empty List)
+    // ------------------------------------------------------------
+    @Test
+    void findAll_EmptyList() {
+        // Given
+        when(commentRepository.findAll()).thenReturn(List.of());
+
+        // When
+        List<CommentRes> result = commentService.findAll();
+
+        // Then
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+        verify(commentRepository).findAll();
     }
 }

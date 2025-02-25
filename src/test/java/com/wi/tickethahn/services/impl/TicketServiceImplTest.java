@@ -140,6 +140,16 @@ class TicketServiceImplTest {
         verify(ticketRepository, never()).save(any(Ticket.class));
     }
 
+    @Test
+    void updateTicket_UserNotFound() {
+        when(ticketRepository.findById(ticketId)).
+                thenReturn(Optional.of(ticket));
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
+        assertThrows(NotFoundEx.class, () -> ticketService.updateTicket(ticketReq, ticketId));
+        verify(ticketRepository, never()).save(any(Ticket.class));
+    }
+        
+
     // ---------------------- checkIfStatusChanged ----------------------
     @Test
     void checkIfStatusChanged_StatusIsDifferent_ShouldCreateAuditLog() {
@@ -160,6 +170,12 @@ class TicketServiceImplTest {
     void checkIfStatusChanged_StatusIsSame_ShouldNotCreateAuditLog() {
         ticket.setStatus(Status.New);
         ticketService.checkIfStatusChanged(ticket, Status.New);
+        verify(auditLogService, never()).createAuditLog(any(AuditLogReq.class));
+    }
+
+    @Test
+    void checkIfStatusChanged_NewStatusIsNull_ShouldNotCreateAuditLog() {
+        ticketService.checkIfStatusChanged(ticket, null);
         verify(auditLogService, never()).createAuditLog(any(AuditLogReq.class));
     }
 
