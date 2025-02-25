@@ -87,6 +87,12 @@ The application will be available at [http://localhost:8080](http://localhost:80
 
 ## API Endpoints
 
+![image](https://github.com/user-attachments/assets/2f4277be-756e-4090-b498-d78645a58137)
+
+![image](https://github.com/user-attachments/assets/0598f71d-0f95-44a6-a4c9-fb1fabbc7eab)
+
+
+
 ### User Endpoints
 
 - `POST /api/v1/auth` - Sign up a new user
