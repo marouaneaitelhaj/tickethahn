@@ -2,7 +2,8 @@ package com.example.ui;
 
 import javax.swing.*;
 
-import com.example.TicketManagementWindow;
+import com.example.MainTicketWindow;
+import com.example.network.ApiClient;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -10,9 +11,9 @@ import java.awt.event.ActionEvent;
 public class LoginUI extends JDialog {
     private JTextField usernameField;
     private JPasswordField passwordField;
-    private TicketManagementWindow parentWindow;
+    private MainTicketWindow parentWindow;
 
-    public LoginUI(TicketManagementWindow parent) {
+    public LoginUI(MainTicketWindow parent) {
         super(parent, "Login", true);
         this.parentWindow = parent;
         setSize(300, 200);

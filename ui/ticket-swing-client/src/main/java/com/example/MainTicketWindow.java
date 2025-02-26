@@ -5,6 +5,7 @@ import com.example.entities.User;
 import com.example.network.ApiClient;
 import com.example.service.TicketService;
 import com.example.ui.TicketTableModel;
+import com.example.ui.LoginUI;
 
 import javax.swing.*;
 import java.awt.*;
@@ -24,6 +25,7 @@ public class MainTicketWindow extends JFrame {
     private final ApiClient apiClient = new ApiClient();
     private static final String USERS_ENDPOINT = "http://localhost:8080/api/v1/auth/all";
     private static final String TICKETS_ENDPOINT = "http://localhost:8080/api/v1/tickets";
+    private String authToken = null;
 
     public MainTicketWindow() {
         super("Ticket Management System");
@@ -31,9 +33,27 @@ public class MainTicketWindow extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new GridBagLayout());
+        checkAuthentication();
+    }
+
+    private void checkAuthentication() {
+        if (authToken == null) {
+            new LoginUI(this).setVisible(true);
+        } else {
+            initComponents();
+            loadUsers();
+            loadTickets();
+        }
+    }
+
+    public void setAuthToken(String token) {
+        this.authToken = token;
+        getContentPane().removeAll();
         initComponents();
         loadUsers();
         loadTickets();
+        revalidate();
+        repaint();
     }
 
     private void initComponents() {
@@ -144,9 +164,6 @@ public class MainTicketWindow extends JFrame {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            MainTicketWindow window = new MainTicketWindow();
-            window.setVisible(true);
-        });
+        SwingUtilities.invokeLater(() -> new MainTicketWindow().setVisible(true));
     }
 }
