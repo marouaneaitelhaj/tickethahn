@@ -54,7 +54,6 @@ public class ApiClient {
             while ((line = reader.readLine()) != null) {
                 response.append(line).append("\n");
             }
-            System.out.println(response.toString().trim());
             return response.toString().trim();
         }
     }

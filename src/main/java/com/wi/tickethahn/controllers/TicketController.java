@@ -56,7 +56,7 @@ public class TicketController {
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('ROLE_IT_Support')")
+    // @PreAuthorize("hasRole('ROLE_IT_Support')")
     public ResponseEntity<List<TicketRsp>> getAllTickets() {
         logger.info("Fetching all tickets");
         List<TicketRsp> tickets = ticketService.findAll();

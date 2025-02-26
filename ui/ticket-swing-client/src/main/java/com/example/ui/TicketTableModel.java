@@ -30,6 +30,7 @@ public class TicketTableModel extends AbstractTableModel {
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         Ticket ticket = tickets.get(rowIndex);
+        System.out.println("Ticket: " + ticket);
         switch (columnIndex) {
             case 0: return ticket.getId();
             case 1: return ticket.getTitle();
