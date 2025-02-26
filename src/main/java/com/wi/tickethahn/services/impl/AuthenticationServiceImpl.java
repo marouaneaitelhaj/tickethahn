@@ -58,7 +58,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
         User user = modelMapper.map(registerRequest, User.class);
         user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
-        user.setRole(Role.Employees);
+        user.setRole(user.getRole());
         userRepository.save(user);
         var jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder()

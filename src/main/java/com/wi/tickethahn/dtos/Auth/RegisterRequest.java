@@ -1,6 +1,6 @@
 package com.wi.tickethahn.dtos.Auth;
 
-import javax.management.relation.Role;
+import com.wi.tickethahn.enums.Role;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -22,4 +22,7 @@ public class RegisterRequest {
     @Email(message = "Email should be valid")
     @NotBlank(message = "Email is mandatory")
     private String email;
+
+    @Builder.Default
+    private Role role = Role.Employees;
 }
