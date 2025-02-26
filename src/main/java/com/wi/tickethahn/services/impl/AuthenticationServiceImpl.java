@@ -36,6 +36,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private  final AuthenticationManager authenticationManager;
     @Override
     public AuthenticationResponse login(AuthenticationRequest authenticationRequest) {
+        System.out.println("login");
        authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         authenticationRequest.getUsername(),

@@ -24,7 +24,7 @@ public class MainTicketWindow extends JFrame {
     private JTextArea messageArea;
     private String authToken = null;
     private final ApiClient apiClient = new ApiClient();
-    private static final String USERS_ENDPOINT = "http://localhost:8080/api/v1/auth/all";
+    private static final String USERS_ENDPOINT = "http://localhost:8080/api/v1/user/all";
     private static final String TICKETS_ENDPOINT = "http://localhost:8080/api/v1/tickets";
 
     public MainTicketWindow() {

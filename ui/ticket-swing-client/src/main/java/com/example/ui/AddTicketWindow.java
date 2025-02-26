@@ -13,7 +13,7 @@ import java.util.List;
 
 public class AddTicketWindow extends JFrame {
 
-    private static final String USERS_ENDPOINT   = "http://localhost:8080/api/v1/auth/all";
+    private static final String USERS_ENDPOINT   = "http://localhost:8080/api/v1/user/all";
     private static final String TICKETS_ENDPOINT = "http://localhost:8080/api/v1/tickets";
 
     private final ApiClient apiClient = ApiClient.getInstance();
