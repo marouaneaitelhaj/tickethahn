@@ -4,7 +4,6 @@ import com.example.entities.User;
 import com.example.network.ApiClient;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -80,7 +79,7 @@ public class AddTicketWindow extends JFrame {
     }
 
     private void loadUsers() {
-        String response = ApiClient.getInstance().doGetRequest(USERS_ENDPOINT, true);
+        String response = apiClient.doGetRequest(USERS_ENDPOINT, true);
         if (response.startsWith("Error:")) {
             resultArea.setText(response);
             return;

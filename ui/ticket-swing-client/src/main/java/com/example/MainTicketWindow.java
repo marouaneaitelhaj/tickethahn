@@ -6,7 +6,6 @@ import com.example.network.ApiClient;
 import com.example.service.TicketService;
 import com.example.ui.TicketTableModel;
 import com.example.ui.LoginUI;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -23,7 +22,7 @@ public class MainTicketWindow extends JFrame {
     private JComboBox<String> priorityCombo, categoryCombo, statusCombo, userCombo;
     private JTextArea messageArea;
     private String authToken = null;
-    private final ApiClient apiClient = new ApiClient();
+    private final ApiClient apiClient = ApiClient.getInstance();
     private static final String USERS_ENDPOINT = "http://localhost:8080/api/v1/user/all";
     private static final String TICKETS_ENDPOINT = "http://localhost:8080/api/v1/tickets";
 
@@ -48,8 +47,7 @@ public class MainTicketWindow extends JFrame {
 
     public void setAuthToken(String token) {
         this.authToken = token;
-        ApiClient.getInstance().setToken(token);
-        System.out.println("Token set to: " + ApiClient.getInstance().getToken());
+        apiClient.setToken(token);
         getContentPane().removeAll();
         initComponents();
         loadUsers();
@@ -127,7 +125,7 @@ public class MainTicketWindow extends JFrame {
     }
 
     private void loadUsers() {
-        String response = ApiClient.getInstance().doGetRequest(USERS_ENDPOINT, true);
+        String response = apiClient.doGetRequest(USERS_ENDPOINT, true);
         if (response.startsWith("Error:")) {
             messageArea.setText(response);
             return;
@@ -145,7 +143,7 @@ public class MainTicketWindow extends JFrame {
         String priority = (String) priorityCombo.getSelectedItem();
         String category = (String) categoryCombo.getSelectedItem();
         String status = (String) statusCombo.getSelectedItem();
-        String ticketJson = "{\"title\":\"" + title + "\", \"description\":\"" + description + "\"}";
+        String ticketJson = "{\"title\":\"" + title + "\", \"description\":\"" + description + "\", \"priority\":\"" + priority + "\", \"category\":\"" + category + "\", \"status\":\"" + status + "\"}";
         String response = apiClient.doPostRequest(TICKETS_ENDPOINT, ticketJson, true);
         messageArea.setText(response);
         loadTickets();

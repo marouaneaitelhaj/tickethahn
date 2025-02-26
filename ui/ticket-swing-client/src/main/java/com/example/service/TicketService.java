@@ -5,7 +5,6 @@ import com.example.entities.User;
 import com.example.network.ApiClient;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,7 +56,6 @@ public class TicketService {
     public boolean updateTicketStatus(String ticketId, String newStatus) {
         String json = "{\"id\":\"" + ticketId + "\", \"status\":\"" + newStatus + "\"}";
         String response = apiClient.doPostRequest(UPDATE_STATUS_ENDPOINT, json, true);
-        System.out.println(response);
         return !response.startsWith("Error:");
     }
 
@@ -72,11 +70,9 @@ public class TicketService {
                 "\"assignedTo_id\":\"" + ticket.getAssignedTo().getId() + "\"" +
                 "}";
         String response = apiClient.doPutRequest(UPDATE_TICKET_ENDPOINT + ticket.getId(), json, true);
-        System.out.println(response);
         return !response.startsWith("Error:");
     }
 
-    // Updated addComment to include CommentReq fields: ticket_id, user_id, message.
     public boolean addComment(String ticketId, String userId, String commentText) {
         String json = "{\"ticket_id\":\"" + ticketId + "\", \"user_id\":\"" + userId + "\", \"message\":\"" + commentText + "\"}";
         String response = apiClient.doPostRequest(COMMENTS_ENDPOINT, json, true);

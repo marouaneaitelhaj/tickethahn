@@ -4,20 +4,23 @@ import javax.swing.*;
 import org.json.JSONException;
 import org.json.JSONObject;
 import com.example.MainTicketWindow;
+import com.example.enums.Role;
 import com.example.network.ApiClient;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 
-public class LoginUI extends JDialog {
+public class SignUp extends JDialog {
     private JTextField usernameField;
     private JPasswordField passwordField;
+    private JTextField emailField;
+    private JComboBox<Role> roleComboBox;
     private MainTicketWindow parentWindow;
     private ApiClient apiClient = ApiClient.getInstance();
 
-    public LoginUI(MainTicketWindow parent) {
-        super(parent, "Login", true);
+    public SignUp(MainTicketWindow parent) {
+        super(parent, "Sign Up", true);
         this.parentWindow = parent;
-        setSize(400, 400);
+        setSize(300, 300);
         setLocationRelativeTo(parent);
         setLayout(new GridBagLayout());
         initComponents();
@@ -42,32 +45,37 @@ public class LoginUI extends JDialog {
         gbc.gridx = 1;
         add(passwordField, gbc);
 
-        JButton loginButton = new JButton("Login");
-        loginButton.addActionListener(this::handleLogin);
-        gbc.gridx = 1;
+        gbc.gridx = 0;
         gbc.gridy = 2;
-        add(loginButton, gbc);
+        add(new JLabel("Email:"), gbc);
+        emailField = new JTextField(20);
+        gbc.gridx = 1;
+        add(emailField, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        add(new JLabel("Role:"), gbc);
+        roleComboBox = new JComboBox<>(Role.values());
+        gbc.gridx = 1;
+        add(roleComboBox, gbc);
 
         JButton signUpButton = new JButton("Sign Up");
         signUpButton.addActionListener(this::handleSignUp);
         gbc.gridx = 1;
-        gbc.gridy = 3;
+        gbc.gridy = 4;
         add(signUpButton, gbc);
     }
 
     private void handleSignUp(ActionEvent event) {
-        SignUp signUp = new SignUp(parentWindow);
-        signUp.setVisible(true);
-    }
-
-    private void handleLogin(ActionEvent event) {
         String username = usernameField.getText().trim();
         String password = new String(passwordField.getPassword()).trim();
-        String response = apiClient.doPostRequest("http://localhost:8080/api/auth", 
-                "{\"username\":\"" + username + "\",\"password\":\"" + password + "\"}", false);
-        
+        String email = emailField.getText().trim();
+        Role role = (Role) roleComboBox.getSelectedItem();
+        String response = apiClient.doPostRequest("http://localhost:8080/api/auth/signup", 
+                "{\"username\":\"" + username + "\",\"password\":\"" + password + "\",\"email\":\"" + email + "\",\"role\":\"" + role + "\"}", false);
+
         if (response.startsWith("Error:")) {
-            JOptionPane.showMessageDialog(this, "Login failed!", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Sign Up failed!", "Error", JOptionPane.ERROR_MESSAGE);
         } else {
             try {
                 JSONObject jsonResponse = new JSONObject(response);

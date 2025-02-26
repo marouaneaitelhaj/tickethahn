@@ -4,7 +4,6 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-
 import lombok.Data;
 
 @Data
@@ -55,6 +54,7 @@ public class ApiClient {
             while ((line = reader.readLine()) != null) {
                 response.append(line).append("\n");
             }
+            System.out.println(response.toString().trim());
             return response.toString().trim();
         }
     }

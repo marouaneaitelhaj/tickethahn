@@ -2,7 +2,6 @@ package com.example.ui;
 
 import com.example.entities.Ticket;
 import com.example.service.TicketService;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;

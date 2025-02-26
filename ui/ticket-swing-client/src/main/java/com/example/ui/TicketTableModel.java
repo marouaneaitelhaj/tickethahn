@@ -1,10 +1,7 @@
 package com.example.ui;
 
-
 import javax.swing.table.AbstractTableModel;
-
 import com.example.entities.Ticket;
-
 import java.util.List;
 
 public class TicketTableModel extends AbstractTableModel {
