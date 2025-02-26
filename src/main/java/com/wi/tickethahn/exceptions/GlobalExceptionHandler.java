@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.Map;
 import java.util.stream.Collectors;
+import com.wi.tickethahn.exceptions.DuplicatedDataEx;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -42,5 +43,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(org.springframework.http.converter.HttpMessageNotReadableException.class)
     public Map<String, String> handle(HttpMessageNotReadableException e) {
         return Map.of("error", "Error: Malformed JSON request");
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(DuplicatedDataEx.class)
+    public Map<String, String> handleDuplicatedDataEx(RuntimeException e) {
+        return Map.of("error", "Error: " + e.getMessage());
     }
 }

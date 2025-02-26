@@ -37,6 +37,8 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        System.out.println("SecurityConfiguration.securityFilterChain");
+        System.out.println(WHITE_LIST_URL);
         http.csrf(AbstractHttpConfigurer::disable);
         http.headers().frameOptions().disable();
         http.authorizeHttpRequests((authorize) -> authorize

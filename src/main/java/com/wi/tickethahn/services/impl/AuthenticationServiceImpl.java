@@ -9,6 +9,7 @@ import com.wi.tickethahn.dtos.Auth.AuthenticationResponse;
 import com.wi.tickethahn.dtos.Auth.RegisterRequest;
 import com.wi.tickethahn.entities.User;
 import com.wi.tickethahn.enums.Role;
+import com.wi.tickethahn.exceptions.DuplicatedDataEx;
 import com.wi.tickethahn.repositories.UserRepository;
 import com.wi.tickethahn.services.inter.AuthenticationService;
 import org.modelmapper.ModelMapper;
@@ -52,6 +53,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public AuthenticationResponse register(RegisterRequest registerRequest) {
+        if (userRepository.existsByEmail(registerRequest.getEmail())) {
+            throw new DuplicatedDataEx("Email already exists");
+        }
         User user = modelMapper.map(registerRequest, User.class);
         user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
         user.setRole(Role.Employees);

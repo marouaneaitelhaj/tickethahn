@@ -1,6 +1,7 @@
 package com.wi.tickethahn.controllers;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,7 +30,7 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<?> register(
-            @RequestBody RegisterRequest registerRequest
+            @Validated @RequestBody RegisterRequest registerRequest
     ) {
         return ResponseEntity.ok(authenticationService.register(registerRequest));
     }
