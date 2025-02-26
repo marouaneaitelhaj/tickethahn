@@ -56,6 +56,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         if (userRepository.existsByEmail(registerRequest.getEmail())) {
             throw new DuplicatedDataEx("Email already exists");
         }
+        if (userRepository.existsByUsername(registerRequest.getUsername())) {
+            throw new DuplicatedDataEx("Username already exists");
+        }
         User user = modelMapper.map(registerRequest, User.class);
         user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
         user.setRole(user.getRole());

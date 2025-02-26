@@ -16,7 +16,7 @@ public class AddTicketWindow extends JFrame {
     private static final String USERS_ENDPOINT   = "http://localhost:8080/api/v1/auth/all";
     private static final String TICKETS_ENDPOINT = "http://localhost:8080/api/v1/tickets";
 
-    private final ApiClient apiClient = new ApiClient();
+    private final ApiClient apiClient = ApiClient.getInstance();
 
     private JTextField titleField;
     private JTextArea descriptionArea;
@@ -80,7 +80,7 @@ public class AddTicketWindow extends JFrame {
     }
 
     private void loadUsers() {
-        String response = apiClient.doGetRequest(USERS_ENDPOINT);
+        String response = ApiClient.getInstance().doGetRequest(USERS_ENDPOINT, true);
         if (response.startsWith("Error:")) {
             resultArea.setText(response);
             return;
@@ -118,7 +118,7 @@ public class AddTicketWindow extends JFrame {
         }
 
         String ticketJson = buildTicketJson(title, description, priority, category, status, assignedToId);
-        String response = apiClient.doPostRequest(TICKETS_ENDPOINT, ticketJson);
+        String response = apiClient.doPostRequest(TICKETS_ENDPOINT, ticketJson, true);
         resultArea.setText(response);
     }
 

@@ -2,6 +2,9 @@ package com.example.ui;
 
 import javax.swing.*;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.example.MainTicketWindow;
 import com.example.network.ApiClient;
 
@@ -51,13 +54,21 @@ public class LoginUI extends JDialog {
     private void handleLogin(ActionEvent event) {
         String username = usernameField.getText().trim();
         String password = new String(passwordField.getPassword()).trim();
-        String response = new ApiClient().doPostRequest("http://localhost:8080/api/auth", 
-                "{\"username\":\"" + username + "\",\"password\":\"" + password + "\"}");
+        String response = ApiClient.getInstance().doPostRequest("http://localhost:8080/api/auth", 
+                "{\"username\":\"" + username + "\",\"password\":\"" + password + "\"}", false);
         
         if (response.startsWith("Error:")) {
             JOptionPane.showMessageDialog(this, "Login failed!", "Error", JOptionPane.ERROR_MESSAGE);
         } else {
-            parentWindow.setAuthToken(response);
+            try {
+                JSONObject jsonResponse = new JSONObject(response);
+                String token = jsonResponse.getString("token");
+                parentWindow.setAuthToken(token);
+                ApiClient.getInstance().setToken(token);
+            } catch (JSONException e) {
+                JOptionPane.showMessageDialog(this, "Invalid response from server!", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
             dispose();
         }
     }

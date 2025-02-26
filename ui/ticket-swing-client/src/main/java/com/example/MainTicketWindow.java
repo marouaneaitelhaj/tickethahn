@@ -22,10 +22,10 @@ public class MainTicketWindow extends JFrame {
     private JTextArea descriptionArea;
     private JComboBox<String> priorityCombo, categoryCombo, statusCombo, userCombo;
     private JTextArea messageArea;
+    private String authToken = null;
     private final ApiClient apiClient = new ApiClient();
     private static final String USERS_ENDPOINT = "http://localhost:8080/api/v1/auth/all";
     private static final String TICKETS_ENDPOINT = "http://localhost:8080/api/v1/tickets";
-    private String authToken = null;
 
     public MainTicketWindow() {
         super("Ticket Management System");
@@ -48,6 +48,8 @@ public class MainTicketWindow extends JFrame {
 
     public void setAuthToken(String token) {
         this.authToken = token;
+        ApiClient.getInstance().setToken(token);
+        System.out.println("Token set to: " + ApiClient.getInstance().getToken());
         getContentPane().removeAll();
         initComponents();
         loadUsers();
@@ -125,7 +127,7 @@ public class MainTicketWindow extends JFrame {
     }
 
     private void loadUsers() {
-        String response = apiClient.doGetRequest(USERS_ENDPOINT);
+        String response = ApiClient.getInstance().doGetRequest(USERS_ENDPOINT, true);
         if (response.startsWith("Error:")) {
             messageArea.setText(response);
             return;
@@ -144,7 +146,7 @@ public class MainTicketWindow extends JFrame {
         String category = (String) categoryCombo.getSelectedItem();
         String status = (String) statusCombo.getSelectedItem();
         String ticketJson = "{\"title\":\"" + title + "\", \"description\":\"" + description + "\"}";
-        String response = apiClient.doPostRequest(TICKETS_ENDPOINT, ticketJson);
+        String response = apiClient.doPostRequest(TICKETS_ENDPOINT, ticketJson, true);
         messageArea.setText(response);
         loadTickets();
     }
