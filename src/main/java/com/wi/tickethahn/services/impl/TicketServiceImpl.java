@@ -11,6 +11,7 @@ import com.wi.tickethahn.dtos.AuditLog.AuditLogReq;
 import com.wi.tickethahn.dtos.Ticket.TicketReq;
 import com.wi.tickethahn.dtos.Ticket.TicketRsp;
 import com.wi.tickethahn.dtos.User.UserReq;
+import com.wi.tickethahn.dtos.User.UserRes;
 import com.wi.tickethahn.entities.Ticket;
 import com.wi.tickethahn.entities.User;
 import com.wi.tickethahn.enums.Action;
@@ -21,6 +22,8 @@ import com.wi.tickethahn.repositories.UserRepository;
 import com.wi.tickethahn.services.inter.AuditLogService;
 import java.util.List;
 import com.wi.tickethahn.services.inter.TicketService;
+
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -49,10 +52,13 @@ public class TicketServiceImpl implements TicketService {
         Ticket ticketEntity = ticketRepository.findById(id).orElseThrow(() -> new NotFoundEx("Ticket not found"));
         checkIfStatusChanged(ticketEntity, ticket.getStatus());
         modelMapper.map(ticket, ticketEntity);
-        Optional.ofNullable(ticket.getAssignedTo_id()).ifPresent(userId -> {
-            User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundEx("User not found"));
-            ticketEntity.setAssignedTo(user);
-        });
+        Optional.ofNullable(ticket.getAssignedTo_id()).ifPresentOrElse(
+            userId -> {
+                User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundEx("User not found"));
+                ticketEntity.setAssignedTo(user);
+            },
+            () -> ticketEntity.setAssignedTo(null)
+        );
         ticketEntity.setStatus(Optional.ofNullable(ticket.getStatus()).orElse(Status.New));
         Ticket savedTicket = ticketRepository.save(ticketEntity);
         return modelMapper.map(savedTicket, TicketRsp.class);
@@ -112,8 +118,10 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public List<TicketRsp> findByUser(UserReq user) {
-        User userEntity = modelMapper.map(user, User.class);
+    public List<TicketRsp> findByUser(UserRes user) {
+        User userEntity = userRepository.findById(user.getId())
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
         List<Ticket> list = ticketRepository.findByAssignedTo(userEntity);
         return list.stream().map(ticket -> modelMapper.map(ticket, TicketRsp.class)).toList();
     }

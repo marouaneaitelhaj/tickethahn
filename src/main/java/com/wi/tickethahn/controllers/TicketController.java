@@ -20,6 +20,7 @@ import com.wi.tickethahn.dtos.Ticket.TicketReq;
 import com.wi.tickethahn.dtos.Ticket.TicketRsp;
 import com.wi.tickethahn.dtos.Ticket.TicketStatusUpdateRequest;
 import com.wi.tickethahn.dtos.User.UserReq;
+import com.wi.tickethahn.dtos.User.UserRes;
 
 import java.util.List;
 import java.util.UUID;
@@ -86,7 +87,7 @@ public class TicketController {
     @GetMapping("/my-tickets")
     @PreAuthorize("hasRole('ROLE_Employees')")
     public ResponseEntity<List<TicketRsp>> getMyTickets() {
-        UserReq user = modelMapper.map(springSecurityAuditAwareImpl.getCurrentAuditor(), UserReq.class);
+        UserRes user = modelMapper.map(springSecurityAuditAwareImpl.getCurrentAuditor(), UserRes.class);
         List<TicketRsp> tickets = ticketService.findByUser(user);
         return ResponseEntity.ok(tickets);
     }

@@ -5,6 +5,7 @@ import java.util.UUID;
 import com.wi.tickethahn.dtos.Ticket.TicketReq;
 import com.wi.tickethahn.dtos.Ticket.TicketRsp;
 import com.wi.tickethahn.dtos.User.UserReq;
+import com.wi.tickethahn.dtos.User.UserRes;
 import com.wi.tickethahn.entities.Ticket;
 import java.util.List;
 import com.wi.tickethahn.enums.Status;
@@ -17,7 +18,7 @@ public interface TicketService {
     List<TicketRsp> getTicketByUser(UUID id);
     List<TicketRsp> findAll();
     TicketRsp findById(UUID id);
-    List<TicketRsp> findByUser(UserReq user);
+    List<TicketRsp> findByUser(UserRes user);
     List<TicketRsp> findByStatus(Status status);
     void deleteTicket(UUID id);
 }

@@ -2,11 +2,13 @@ package com.wi.tickethahn.controllers;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.wi.tickethahn.configs.SpringSecurityAuditAwareImpl;
 import com.wi.tickethahn.dtos.Auth.AuthenticationRequest;
 import com.wi.tickethahn.dtos.Auth.RegisterRequest;
 import com.wi.tickethahn.services.inter.AuthenticationService;
@@ -19,6 +21,8 @@ import lombok.RequiredArgsConstructor;
 public class AuthController {
 
     private final AuthenticationService authenticationService;
+
+    private final SpringSecurityAuditAwareImpl springSecurityAuditAwareImpl;
 
     @PostMapping
     public ResponseEntity<?> login(
@@ -33,6 +37,11 @@ public class AuthController {
             @Validated @RequestBody RegisterRequest registerRequest
     ) {
         return ResponseEntity.ok(authenticationService.register(registerRequest));
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<?> getMyProfile() {
+        return ResponseEntity.ok(springSecurityAuditAwareImpl.getCurrentAuditor());
     }
 
 }
