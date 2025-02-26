@@ -14,6 +14,8 @@ import com.wi.tickethahn.enums.Role;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -34,6 +36,7 @@ public class User implements UserDetails {
     private String username;
     private String password;
     private String email;
+    @Enumerated(EnumType.STRING)
     private Role role;
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -42,7 +45,6 @@ public class User implements UserDetails {
     private Timestamp updatedAt;
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAuthorities'");
+        return role.getAuthorities();
     }
 }

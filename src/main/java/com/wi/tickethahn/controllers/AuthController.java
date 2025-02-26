@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.wi.tickethahn.dtos.Auth.AuthenticationRequest;
 import com.wi.tickethahn.dtos.Auth.RegisterRequest;
-import com.wi.tickethahn.repositories.UserRepository;
 import com.wi.tickethahn.services.inter.AuthenticationService;
 
 import lombok.RequiredArgsConstructor;
