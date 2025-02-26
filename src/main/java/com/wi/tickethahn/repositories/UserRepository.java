@@ -7,7 +7,7 @@ import com.wi.tickethahn.entities.User;
 
 public interface UserRepository extends JpaRepository<User, UUID> {
 
-    Optional<User>  findByUsername(String username);
+    Optional<User> findByUsername(String username);
 
     boolean existsByEmail(String email);
 }

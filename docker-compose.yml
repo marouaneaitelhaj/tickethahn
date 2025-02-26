@@ -29,6 +29,16 @@ services:
     networks:
       - app-network
 
+  dbgate:
+    image: dbgate/dbgate
+    container_name: dbgate
+    depends_on:
+      - oracledb
+    ports:
+      - "3001:3000"
+    networks:
+      - app-network
+
 networks:
   app-network:
     driver: bridge

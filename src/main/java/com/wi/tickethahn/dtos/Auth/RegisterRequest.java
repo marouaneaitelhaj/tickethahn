@@ -23,6 +23,5 @@ public class RegisterRequest {
     @NotBlank(message = "Email is mandatory")
     private String email;
 
-    @Builder.Default
-    private Role role = Role.Employees;
+    private Role role;
 }
