@@ -4,10 +4,10 @@ package com.wi.tickethahn.services.impl;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import com.wi.tickethahn.configs.JwtService;
-import com.wi.tickethahn.dto.AuthenticationRequest;
-import com.wi.tickethahn.dto.AuthenticationResponse;
-import com.wi.tickethahn.dto.RegisterRequest;
-import com.wi.tickethahn.entities.DBUser;
+import com.wi.tickethahn.dtos.Auth.AuthenticationRequest;
+import com.wi.tickethahn.dtos.Auth.AuthenticationResponse;
+import com.wi.tickethahn.dtos.Auth.RegisterRequest;
+import com.wi.tickethahn.entities.User;
 import com.wi.tickethahn.enums.Role;
 import com.wi.tickethahn.repositories.UserRepository;
 import com.wi.tickethahn.services.inter.AuthenticationService;
@@ -52,9 +52,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public AuthenticationResponse register(RegisterRequest registerRequest) {
-        DBUser user = modelMapper.map(registerRequest, DBUser.class);
+        User user = modelMapper.map(registerRequest, User.class);
         user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
-        user.setRole(Role.USER);
+        user.setRole(Role.Employees);
         userRepository.save(user);
         var jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder()
@@ -63,7 +63,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public DBUser getUserDbUser(String name) {
+    public User getUserDbUser(String name) {
         return userRepository.findByUsername(name).orElseThrow(() -> new RuntimeException("User not found"));
     }
 }
