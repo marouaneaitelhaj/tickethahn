@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.wi.tickethahn.dtos.AuditLog.AuditLogReq;
 import com.wi.tickethahn.dtos.Ticket.TicketReq;
 import com.wi.tickethahn.dtos.Ticket.TicketRsp;
+import com.wi.tickethahn.dtos.User.UserReq;
 import com.wi.tickethahn.entities.Ticket;
 import com.wi.tickethahn.entities.User;
 import com.wi.tickethahn.enums.Action;
@@ -108,5 +109,12 @@ public class TicketServiceImpl implements TicketService {
     public void deleteTicket(UUID id) {
         Ticket ticket = ticketRepository.findById(id).orElseThrow(() -> new NotFoundEx("Ticket not found"));
         ticketRepository.delete(ticket);
+    }
+
+    @Override
+    public List<TicketRsp> findByUser(UserReq user) {
+        User userEntity = modelMapper.map(user, User.class);
+        List<Ticket> list = ticketRepository.findByAssignedTo(userEntity);
+        return list.stream().map(ticket -> modelMapper.map(ticket, TicketRsp.class)).toList();
     }
 }
