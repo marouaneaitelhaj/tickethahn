@@ -1,11 +1,13 @@
 package com.example;
 
+import com.example.entities.CommentReq;
 import com.example.entities.Ticket;
 import com.example.entities.User;
 import com.example.network.ApiClient;
 import com.example.service.TicketService;
 import com.example.ui.TicketTableModel;
 import com.example.ui.LoginUI;
+
 import javax.swing.*;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -14,6 +16,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class MainTicketWindow extends JFrame {
     private TicketService ticketService = new TicketService();
@@ -24,21 +27,24 @@ public class MainTicketWindow extends JFrame {
     private JTextArea descriptionArea;
     private JComboBox<String> priorityCombo, categoryCombo, statusCombo, userCombo;
     private JTextArea messageArea;
+    private JTextArea commentArea;
+    private JButton addCommentButton;
+    private JPanel commentsPanel;
+    private JScrollPane commentsScrollPane;
     private String authToken = null;
     private final ApiClient apiClient = ApiClient.getInstance();
 
     private static final String USERS_ENDPOINT = "http://localhost:8080/api/v1/user/all";
     private static final String TICKETS_ENDPOINT = "http://localhost:8080/api/v1/tickets";
-    // Hypothetical endpoint for updating tickets.
     private static final String UPDATE_TICKET_ENDPOINT = "http://localhost:8080/api/v1/tickets/";
+    private static final String COMMENTS_ENDPOINT = "http://localhost:8080/api/v1/comments";
 
-    // Flag and reference to track if we are editing an existing ticket.
     private boolean isEditing = false;
     private Ticket editingTicket = null;
 
     public MainTicketWindow() {
         super("Ticket Management System");
-        setSize(1000, 700);
+        setSize(1000, 800); // Increased height to accommodate comments section
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new GridBagLayout());
@@ -106,14 +112,17 @@ public class MainTicketWindow extends JFrame {
         gbc.weighty = 0.3;
         add(formPanel, gbc);
 
-        // Button Panel for Submitting and Editing Tickets
+        // Button Panel for Submitting, Editing, and Refreshing Tickets
         JPanel buttonPanel = new JPanel();
         JButton submitButton = new JButton("Submit Ticket");
         submitButton.addActionListener((ActionEvent e) -> handleSubmitTicket());
         JButton editButton = new JButton("Edit Selected");
         editButton.addActionListener((ActionEvent e) -> handleEditTicket());
+        JButton refreshButton = new JButton("Refresh Tickets");
+        refreshButton.addActionListener((ActionEvent e) -> loadTickets());
         buttonPanel.add(submitButton);
         buttonPanel.add(editButton);
+        buttonPanel.add(refreshButton);
 
         gbc.gridy = 1;
         gbc.weighty = 0.1;
@@ -126,7 +135,7 @@ public class MainTicketWindow extends JFrame {
 
         gbc.gridy = 2;
         gbc.gridwidth = 2;
-        gbc.weighty = 0.6;
+        gbc.weighty = 0.4;
         add(tableScroll, gbc);
 
         // Message Area for status and error messages
@@ -137,85 +146,142 @@ public class MainTicketWindow extends JFrame {
         gbc.gridy = 3;
         gbc.weighty = 0.1;
         add(messageScroll, gbc);
+
+        // Comments Section
+        initCommentsSection();
+    }
+
+    private void initCommentsSection() {
+        commentsPanel = new JPanel();
+        commentsPanel.setLayout(new BoxLayout(commentsPanel, BoxLayout.Y_AXIS));
+        commentsPanel.setBorder(BorderFactory.createTitledBorder("Comments"));
+
+        commentArea = new JTextArea(3, 20);
+        addCommentButton = new JButton("Add Comment");
+        addCommentButton.addActionListener((ActionEvent e) -> handleAddComment());
+
+        JPanel commentInputPanel = new JPanel(new BorderLayout());
+        commentInputPanel.add(new JScrollPane(commentArea), BorderLayout.CENTER);
+        commentInputPanel.add(addCommentButton, BorderLayout.EAST);
+
+        commentsScrollPane = new JScrollPane(commentsPanel);
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        gbc.gridwidth = 2;
+        gbc.weightx = 1;
+        gbc.weighty = 0.3;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.insets = new Insets(5, 5, 5, 5);
+        add(commentInputPanel, gbc);
+
+        gbc.gridy = 5;
+        add(commentsScrollPane, gbc);
     }
 
     private void loadUsers() {
-        String response = apiClient.doGetRequest(USERS_ENDPOINT, true);
-        if (response.startsWith("Error:")) {
-            messageArea.setText(response);
-            return;
-        }
-        userCombo.removeAllItems();
-        userList.clear();
-
-        try {
-            JSONArray jsonArray = new JSONArray(response);
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject userObject = jsonArray.getJSONObject(i);
-                User user = new User();
-                user.setId(userObject.getString("id"));
-                user.setUsername(userObject.getString("username"));
-                // Set other fields as needed
-                userList.add(user);
-                userCombo.addItem(user.getUsername());
+        new SwingWorker<Void, Void>() {
+            @Override
+            protected Void doInBackground() {
+                String response = apiClient.doGetRequest(USERS_ENDPOINT, true);
+                if (response.startsWith("Error:")) {
+                    messageArea.setText(response);
+                    return null;
+                }
+                try {
+                    JSONArray jsonArray = new JSONArray(response);
+                    userList.clear();
+                    userCombo.removeAllItems();
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject userObject = jsonArray.getJSONObject(i);
+                        User user = new User();
+                        user.setId(userObject.getString("id"));
+                        user.setUsername(userObject.getString("username"));
+                        userList.add(user);
+                        userCombo.addItem(user.getUsername());
+                    }
+                    messageArea.setText("Users loaded successfully.");
+                } catch (JSONException e) {
+                    messageArea.setText("Failed to parse users: " + e.getMessage());
+                }
+                return null;
             }
-            messageArea.setText("Users loaded successfully.");
-        } catch (JSONException e) {
-            messageArea.setText("Failed to parse users: " + e.getMessage());
-        }
+        }.execute();
     }
 
     private void loadTickets() {
-        tableModel.setTickets(ticketService.getAllTickets());
+        new SwingWorker<Void, Void>() {
+            @Override
+            protected Void doInBackground() {
+                tableModel.setTickets(ticketService.getAllTickets());
+                return null;
+            }
+
+            @Override
+            protected void done() {
+                ticketsTable.repaint();
+                messageArea.setText("Tickets loaded successfully.");
+            }
+        }.execute();
     }
 
     private void handleSubmitTicket() {
-        String title = titleField.getText().trim();
-        String description = descriptionArea.getText().trim();
-        String priority = (String) priorityCombo.getSelectedItem();
-        String category = (String) categoryCombo.getSelectedItem();
-        String status = (String) statusCombo.getSelectedItem();
-
-        // Retrieve the assigned user's ID based on selection
-        int selectedUserIndex = userCombo.getSelectedIndex();
-        String assignedUserId = "";
-        if (selectedUserIndex >= 0 && selectedUserIndex < userList.size()) {
-            assignedUserId = userList.get(selectedUserIndex).getId();
-        }
-
-        JSONObject ticketObject = new JSONObject();
-        try {
-            ticketObject.put("title", title);
-            ticketObject.put("description", description);
-            ticketObject.put("priority", priority);
-            ticketObject.put("category", category);
-            ticketObject.put("status", status);
-            ticketObject.put("assignedTo_id", assignedUserId);
-        } catch (JSONException e) {
-            messageArea.setText("Failed to create ticket JSON: " + e.getMessage());
+        if (!validateForm()) {
             return;
         }
 
-        String response;
-        if (!isEditing) {
-            // Create a new ticket
-            response = apiClient.doPostRequest(TICKETS_ENDPOINT, ticketObject.toString(), true);
-        } else {
-            // Update the existing ticket. Ensure the ticket ID is included.
-            try {
-                ticketObject.put("id", editingTicket.getId());
-            } catch (JSONException e) {
-                messageArea.setText("Failed to add ticket id: " + e.getMessage());
-                return;
+        new SwingWorker<Void, Void>() {
+            @Override
+            protected Void doInBackground() {
+                String title = titleField.getText().trim();
+                String description = descriptionArea.getText().trim();
+                String priority = (String) priorityCombo.getSelectedItem();
+                String category = (String) categoryCombo.getSelectedItem();
+                String status = (String) statusCombo.getSelectedItem();
+
+                // Retrieve the assigned user's ID based on selection
+                int selectedUserIndex = userCombo.getSelectedIndex();
+                String assignedUserId = "";
+                if (selectedUserIndex >= 0 && selectedUserIndex < userList.size()) {
+                    assignedUserId = userList.get(selectedUserIndex).getId();
+                }
+
+                JSONObject ticketObject = new JSONObject();
+                try {
+                    ticketObject.put("title", title);
+                    ticketObject.put("description", description);
+                    ticketObject.put("priority", priority);
+                    ticketObject.put("category", category);
+                    ticketObject.put("status", status);
+                    ticketObject.put("assignedTo_id", assignedUserId);
+                } catch (JSONException e) {
+                    messageArea.setText("Failed to create ticket JSON: " + e.getMessage());
+                    return null;
+                }
+
+                String response;
+                if (!isEditing) {
+                    // Create a new ticket
+                    response = apiClient.doPostRequest(TICKETS_ENDPOINT, ticketObject.toString(), true);
+                } else {
+                    // Update the existing ticket
+                    try {
+                        ticketObject.put("id", editingTicket.getId());
+                    } catch (JSONException e) {
+                        messageArea.setText("Failed to add ticket id: " + e.getMessage());
+                        return null;
+                    }
+                    response = apiClient.doPutRequest(UPDATE_TICKET_ENDPOINT + editingTicket.getId(), ticketObject.toString(), true);
+                    isEditing = false;
+                    editingTicket = null;
+                }
+                messageArea.setText(response);
+                clearForm();
+                loadTickets();
+                return null;
             }
-            response = apiClient.doPutRequest(UPDATE_TICKET_ENDPOINT + editingTicket.getId(), ticketObject.toString(), true);
-            System.out.println("Ticket update response: " + response);
-            isEditing = false;
-            editingTicket = null;
-        }
-        messageArea.setText(response);
-        clearForm();
-        loadTickets();
+        }.execute();
     }
 
     private void handleEditTicket() {
@@ -242,6 +308,104 @@ public class MainTicketWindow extends JFrame {
             }
         }
         messageArea.setText("Editing ticket: " + ticket.getId());
+
+        // Load comments for the selected ticket
+        loadComments(ticket);
+    }
+
+    private void handleAddComment() {
+        String message = commentArea.getText().trim();
+        if (message.isEmpty()) {
+            messageArea.setText("Comment cannot be empty.");
+            return;
+        }
+
+        int selectedRow = ticketsTable.getSelectedRow();
+        if (selectedRow < 0) {
+            messageArea.setText("Please select a ticket to add a comment.");
+            return;
+        }
+
+        Ticket selectedTicket = tableModel.getTicketAt(selectedRow);
+        String ticketId = selectedTicket.getId();
+        String userId = getCurrentUserId(); // Implement this method to get the current user's ID
+
+        CommentReq commentReq = new CommentReq();
+        commentReq.setTicket_id(ticketId);
+        commentReq.setUser_id(userId);
+        commentReq.setMessage(message);
+
+
+        new SwingWorker<Void, Void>() {
+            @Override
+            protected Void doInBackground() {
+                JSONObject commentObject = new JSONObject();
+                try {
+                    commentObject.put("ticket_id", commentReq.getTicket_id());
+                    commentObject.put("user_id", commentReq.getUser_id());
+                    commentObject.put("message", commentReq.getMessage());
+                } catch (JSONException e) {
+                    messageArea.setText("Failed to create comment JSON: " + e.getMessage());
+                    return null;
+                }
+                String response = apiClient.doPostRequest(COMMENTS_ENDPOINT, commentObject.toString(), true);
+                System.out.println(response);
+                if (response.startsWith("Error:")) {
+                    messageArea.setText(response);
+                } else {
+                    messageArea.setText("Comment added successfully.");
+                    commentArea.setText("");
+                    loadComments(selectedTicket);
+                }
+                return null;
+            }
+        }.execute();
+    }
+
+    private void loadComments(Ticket ticket) {
+        new SwingWorker<Void, Void>() {
+            @Override
+            protected Void doInBackground() {
+                String response = apiClient.doGetRequest(COMMENTS_ENDPOINT + "?ticket_id=" + ticket.getId(), true);
+                if (response.startsWith("Error:")) {
+                    messageArea.setText(response);
+                } else {
+                    try {
+                        JSONArray jsonArray = new JSONArray(response);
+                        commentsPanel.removeAll();
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject commentObject = jsonArray.getJSONObject(i);
+                            String commentText = commentObject.getString("message");
+                            String createdAt = commentObject.optString("createdAt", "Unknown date");
+                            JLabel commentLabel = new JLabel("<html><b>" + createdAt + ":</b> " + commentText + "</html>");
+                            commentsPanel.add(commentLabel);
+                        }
+                        commentsPanel.revalidate();
+                        commentsPanel.repaint();
+                    } catch (JSONException e) {
+                        messageArea.setText("Failed to parse comments: " + e.getMessage());
+                    }
+                }
+                return null;
+            }
+        }.execute();
+    }
+
+    private String getCurrentUserId() {
+        // Implement this method to return the current user's ID
+        return apiClient.getCurrentUserId(); // Replace with actual logic
+    }
+
+    private boolean validateForm() {
+        if (titleField.getText().trim().isEmpty()) {
+            messageArea.setText("Title is required.");
+            return false;
+        }
+        if (descriptionArea.getText().trim().isEmpty()) {
+            messageArea.setText("Description is required.");
+            return false;
+        }
+        return true;
     }
 
     private void clearForm() {

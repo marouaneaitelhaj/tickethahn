@@ -4,6 +4,10 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import lombok.Data;
 
 @Data
@@ -43,7 +47,7 @@ public class ApiClient {
         connection.setRequestProperty("Authorization", "Bearer " + token);
     }
 
-    private String readResponse(HttpURLConnection connection) throws IOException {
+    private String readResponse(HttpURLConnection connection, String url) throws IOException {
         int status = connection.getResponseCode();
         InputStream stream = (status >= 200 && status < 300)
                 ? connection.getInputStream() : connection.getErrorStream();
@@ -54,6 +58,7 @@ public class ApiClient {
             while ((line = reader.readLine()) != null) {
                 response.append(line).append("\n");
             }
+            System.out.println(response.toString().trim() + " " + status + " " + url);
             return response.toString().trim();
         }
     }
@@ -69,7 +74,7 @@ public class ApiClient {
                 addAuthorizationHeader(connection);
             }
 
-            return readResponse(connection);
+            return readResponse(connection, urlString);
         } catch (Exception ex) {
             return "Error: " + ex.getMessage();
         } finally {
@@ -96,7 +101,7 @@ public class ApiClient {
                 os.write(input, 0, input.length);
             }
 
-            return readResponse(connection);
+            return readResponse(connection, urlString);
         } catch (Exception ex) {
             return "Error: " + ex.getMessage();
         } finally {
@@ -123,11 +128,22 @@ public class ApiClient {
                 os.write(input, 0, input.length);
             }
 
-            return readResponse(connection);
+            return readResponse(connection, urlString);
         } catch (Exception ex) {
             return "Error: " + ex.getMessage();
         } finally {
             if (connection != null) connection.disconnect();
+        }
+    }
+
+    public String getCurrentUserId() {
+        String urlString = "http://localhost:8080/api/auth/me";
+        String response = doGetRequest(urlString, true);
+        try {
+            JSONObject jsonObject = new JSONObject(response);
+            return jsonObject.getString("id");
+        } catch (Exception e) {
+            return "xxxError: Malformed JSON response";
         }
     }
 }

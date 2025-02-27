@@ -2,7 +2,7 @@ package com.example.entities;
 
 
 import java.sql.Timestamp;
-import java.util.UUID;
+
 
 import com.example.enums.Role;
 

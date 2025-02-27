@@ -15,6 +15,7 @@ import com.wi.tickethahn.services.inter.AuthenticationService;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -35,13 +36,17 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private  final AuthenticationManager authenticationManager;
     @Override
-    public AuthenticationResponse login(AuthenticationRequest authenticationRequest) {
-       authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        authenticationRequest.getUsername(),
-                        authenticationRequest.getPassword()
-                )
-        );
+    public AuthenticationResponse login(AuthenticationRequest authenticationRequest) throws Exception {
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            authenticationRequest.getUsername(),
+                            authenticationRequest.getPassword()
+                    )
+            );
+        } catch (AuthenticationException e) {
+            throw new Exception("Invalid username or password");
+        }
         var user = userRepository.findByUsername(authenticationRequest.getUsername()).orElseThrow(() -> new RuntimeException("User not found"));
         var jwtToken = jwtService.generateToken(user);
 

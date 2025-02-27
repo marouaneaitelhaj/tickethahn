@@ -30,7 +30,7 @@ public class CommentController {
 
 
     @PostMapping
-    @PreAuthorize("hasRole('ROLE_IT_Support')")
+    // @PreAuthorize("hasRole('ROLE_IT_Support')")
     public ResponseEntity<CommentRes> createComment(@Valid @RequestBody CommentReq comment) {
         CommentRes commentRes = commentService.createComment(comment);
         return ResponseEntity.status(HttpStatus.CREATED).body(commentRes);

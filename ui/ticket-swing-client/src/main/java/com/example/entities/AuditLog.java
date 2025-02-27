@@ -1,7 +1,7 @@
 package com.example.entities;
 
 import java.sql.Timestamp;
-import java.util.UUID;
+
 
 import com.example.enums.Action;
 
@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AuditLog {
-    private UUID id;
+    private String id;
 
     private Ticket ticket;
 

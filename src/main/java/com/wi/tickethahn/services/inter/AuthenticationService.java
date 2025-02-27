@@ -6,7 +6,7 @@ import com.wi.tickethahn.dtos.Auth.RegisterRequest;
 import com.wi.tickethahn.entities.User;
 
 public interface AuthenticationService {
-    AuthenticationResponse login(AuthenticationRequest authenticationRequest);
+    AuthenticationResponse login(AuthenticationRequest authenticationRequest) throws Exception;
 
     AuthenticationResponse register(RegisterRequest registerRequest);
 

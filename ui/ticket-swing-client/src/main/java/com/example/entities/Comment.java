@@ -1,6 +1,6 @@
 package com.example.entities;
 
-import java.util.UUID;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,7 +10,7 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Comment {
-    private UUID id;
+    private String id;
 
     private Ticket ticket;
 
