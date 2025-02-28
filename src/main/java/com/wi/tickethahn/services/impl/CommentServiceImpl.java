@@ -1,6 +1,7 @@
 package com.wi.tickethahn.services.impl;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -45,6 +46,12 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public List<CommentRes> findAll() {
         List<Comment> comments = commentRepository.findAll();
+        return comments.stream().map(comment -> modelMapper.map(comment, CommentRes.class)).toList();
+    }
+
+    @Override
+    public List<CommentRes> findByTicketId(UUID ticketId) {
+        List<Comment> comments = commentRepository.findByTicketId(ticketId);
         return comments.stream().map(comment -> modelMapper.map(comment, CommentRes.class)).toList();
     }
     

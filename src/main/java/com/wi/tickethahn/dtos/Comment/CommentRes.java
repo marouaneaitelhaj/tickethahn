@@ -15,11 +15,6 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 public class CommentRes {
     private UUID id;
-
-    private Ticket ticket;
-
-    private User user;
-
     private String message;
     private Timestamp createdAt;
     private Timestamp updatedAt;

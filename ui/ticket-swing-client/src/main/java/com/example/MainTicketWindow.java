@@ -9,6 +9,8 @@ import com.example.ui.TicketTableModel;
 import com.example.ui.LoginUI;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,7 +18,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
-
 
 public class MainTicketWindow extends JFrame {
     private TicketService ticketService = new TicketService();
@@ -132,6 +133,17 @@ public class MainTicketWindow extends JFrame {
         tableModel = new TicketTableModel(ticketService.getAllTickets());
         ticketsTable = new JTable(tableModel);
         JScrollPane tableScroll = new JScrollPane(ticketsTable);
+
+        // Add a listener to detect row selection changes
+        ticketsTable.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) { // Ensure the event is not fired multiple times
+                int selectedRow = ticketsTable.getSelectedRow();
+                if (selectedRow >= 0) {
+                    Ticket selectedTicket = tableModel.getTicketAt(selectedRow);
+                    loadComments(selectedTicket); // Load comments for the selected ticket
+                }
+            }
+        });
 
         gbc.gridy = 2;
         gbc.gridwidth = 2;
@@ -335,7 +347,6 @@ public class MainTicketWindow extends JFrame {
         commentReq.setUser_id(userId);
         commentReq.setMessage(message);
 
-
         new SwingWorker<Void, Void>() {
             @Override
             protected Void doInBackground() {
@@ -366,7 +377,7 @@ public class MainTicketWindow extends JFrame {
         new SwingWorker<Void, Void>() {
             @Override
             protected Void doInBackground() {
-                String response = apiClient.doGetRequest(COMMENTS_ENDPOINT + "?ticket_id=" + ticket.getId(), true);
+                String response = apiClient.doGetRequest(COMMENTS_ENDPOINT + "/" + ticket.getId(), true);
                 if (response.startsWith("Error:")) {
                     messageArea.setText(response);
                 } else {
@@ -383,7 +394,7 @@ public class MainTicketWindow extends JFrame {
                         commentsPanel.revalidate();
                         commentsPanel.repaint();
                     } catch (JSONException e) {
-                        messageArea.setText("Failed to parse comments: " + e.getMessage());
+                        // messageArea.setText("Failed to parse comments: " + e.getMessage());
                     }
                 }
                 return null;
@@ -419,6 +430,11 @@ public class MainTicketWindow extends JFrame {
         }
         isEditing = false;
         editingTicket = null;
+
+        // Clear the comments panel
+        commentsPanel.removeAll();
+        commentsPanel.revalidate();
+        commentsPanel.repaint();
     }
 
     public static void main(String[] args) {
